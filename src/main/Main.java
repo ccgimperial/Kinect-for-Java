@@ -1,6 +1,9 @@
 package main;
 
-import kinect.*;
+import kinect.Kinect;
+import kinect.KinectObserver;
+import kinect.skeleton.Skeleton;
+import kinect.visual.Imager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -8,9 +11,9 @@ import java.awt.image.BufferedImage;
 
 public class Main implements KinectObserver {
 
-    static BufferedImage img_video = new BufferedImage(640,480,BufferedImage.TYPE_4BYTE_ABGR);
-    static BufferedImage img_depth = new BufferedImage(320,240,BufferedImage.TYPE_BYTE_GRAY);
-    static BufferedImage img_player = new BufferedImage(320,240,BufferedImage.TYPE_BYTE_GRAY);
+    static BufferedImage img_video = Imager.getNewVideoImage();
+    static BufferedImage img_depth = Imager.getNewDepthGreyscale();
+    static BufferedImage img_player = Imager.getNewDepthGreyscale();
     static JFrame frame;
 
     public static void main(String[] args) {
@@ -19,17 +22,17 @@ public class Main implements KinectObserver {
         frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.getContentPane().setLayout(new BorderLayout());
-        frame.getContentPane().add(new JLabel(new ImageIcon(img_video)),BorderLayout.NORTH);
+        frame.getContentPane().add(new JLabel(new ImageIcon(img_video)), BorderLayout.NORTH);
         JPanel j = new JPanel(new FlowLayout());
         j.add(new JLabel(new ImageIcon(img_depth)));
         j.add(new JLabel(new ImageIcon(img_player)));
-        
-        frame.getContentPane().add(j,BorderLayout.SOUTH);
+
+        frame.getContentPane().add(j, BorderLayout.SOUTH);
         frame.pack();
         frame.setVisible(true);
 
-        Kinect.Init(new Main());
-        
+        Kinect.init(new Main());
+
     }
 
     // implement the Depth Event Handler
@@ -48,10 +51,10 @@ public class Main implements KinectObserver {
     // implement the Skeleton Event Handler
     public void SkeletonEvent() {
 
-        int id = Skeleton.GetTrackedSkeletonId();
+        int id = Skeleton.getTrackedSkeletonId();
         frame.setTitle("no skeleton " + id);
-        if(Skeleton.IsTrackingSkeleton())
-            frame.setTitle("got skeleton " + Skeleton.GetTrackedSkeletonId());
+        if (Skeleton.isTrackingSomeSkeleton())
+            frame.setTitle("got skeleton " + Skeleton.getTrackedSkeletonId());
 
     }
 

@@ -1,63 +1,95 @@
 package kinect;
 
+import java.io.File;
 import java.nio.ByteBuffer;
 
-public class Kinect {
+public final class Kinect {
 
+    ///////////////////////////////////////////////////////////////////////////////
+    // STATIC LIBRARY LOAD CODE
+    ///////////////////////////////////////////////////////////////////////////////
     static {
+        // look for KinectDLL.dll in following order
+        // - current directory
+        // - c++ sub-project
         try {
-            System.loadLibrary("KinectDLL/x64/Release/KinectDLL");
+            if ((new File("KinectDLL.dll")).exists()) {
+                System.loadLibrary("KinectDLL");
+            } else
+                System.loadLibrary("KinectDLL/x64/Release/KinectDLL");
         } catch (UnsatisfiedLinkError e) {
             System.err.println("Native code library failed to load.\n" + e);
             System.exit(1);
         }
     }
 
+    ///////////////////////////////////////////////////////////////////////////////
+    // PRIVATE MEMBERS
+    ///////////////////////////////////////////////////////////////////////////////
     static boolean keep_running = true;
     static boolean kinect_paused = false;
     static KinectObserver OBSERVER = null;
 
+    ///////////////////////////////////////////////////////////////////////////////
+    // PUBLIC INTERFACE
+    ///////////////////////////////////////////////////////////////////////////////
+
+    // Depth and Video Buffers
+    public static ByteBuffer DEPTH_BUFFER = allocateDepth();
+    public static ByteBuffer VIDEO_BUFFER = allocateVideo();
+
     // start the kinect and handle main loop
-    public final static void Init(KinectObserver observer){
+    public static void init(KinectObserver observer) {
         OBSERVER = observer;
-        if(!Start()) System.exit(1);
-        while(keep_running){
-            while(true){
-                if(kinect_paused) continue;
-                switch (Kinect.GetNextEvent()) {
-                    case 1: observer.VideoEvent(); break;
-                    case 2: observer.DepthEvent(); break;
-                    case 3: observer.SkeletonEvent(); break;
-                    default:System.exit(0);
-                }
+        if (!start()) System.exit(1);
+        while (keep_running) {
+            if (kinect_paused) continue;
+            int event_id = Kinect.getNextEvent();
+            switch (event_id) {
+                case 1:
+                    observer.VideoEvent();
+                    break;
+                case 2:
+                    observer.DepthEvent();
+                    break;
+                case 3:
+                    observer.SkeletonEvent();
+                    break;
+                case 0:
+                    System.out.println("Kinect shutdown event received - stopping");
+                    keep_running = false;
+                    stop();
+                    break;
+                case 258: /* sporadically get this - ignore it */
+                    break;
+                default:
+                    System.out.println("Unknown Kinect event returned: " + event_id);
             }
         }
     }
-    final static native boolean Start();
 
-    // Depth and Video Buffers
-    public static ByteBuffer DEPTH_BUFFER = AllocateDepth();
-    public static ByteBuffer VIDEO_BUFFER = AllocateVideo();
+    public static void setPaused(boolean b) {
+        kinect_paused = b;
+    }
 
-    final static native void Stop();
+    public static native void stop();
 
-    // public native interface
-    public static void SetPaused(boolean b){kinect_paused = b;}
+    ///////////////////////////////////////////////////////////////////////////////
+    // PUBLIC NATIVE INTERFACE
+    ///////////////////////////////////////////////////////////////////////////////
+    public static native void setSensorAngle(int angle);
 
-    // private native interface
-    final static native int GetNextEvent();
-    final static native ByteBuffer AllocateVideo();
-    final static native ByteBuffer AllocateDepth();
+    public static native int getSensorAngle();
 
+    ///////////////////////////////////////////////////////////////////////////////
+    // PRIVATE NATIVE INTERFACE
+    ///////////////////////////////////////////////////////////////////////////////
+    static native boolean start();
 
-    // skeleton access
-    final static native boolean IsTrackingSkeleton();
-    final static native int GetTrackedSkeletonId();
-    final static native int GetSkeletonTrackingState(int SkeletonID);
-    final static native int  GetJointTrackingState(int SkeletonID, int JointID);
-    final static native float GetJointPositionByIndex(int SkeletonID, int JointID, int PositionIndex);
-    final static native float GetSkeletonNormalToGravityByIndex(int PositionIndex);
-    final static native float GetSkeletonFloorClipPlaneByIndex(int PositionIndex);
+    static native int getNextEvent();
 
+    static native ByteBuffer allocateVideo();
+
+    static native ByteBuffer allocateDepth();
 
 }

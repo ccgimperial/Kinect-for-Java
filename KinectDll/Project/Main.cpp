@@ -4,11 +4,15 @@
 #include "jni.h"
 #include <iostream>
 
+using namespace std;
 
 // JNI interface
 extern "C" {
 
-	JNIEXPORT jbyteArray Java_kinect_Kinect_AllocateVideo(JNIEnv *env, jclass cls) {
+	////////////////////////////////////////////////////////////////////////////////////////
+	// CORE KINECT
+	////////////////////////////////////////////////////////////////////////////////////////
+	JNIEXPORT jbyteArray Java_kinect_Kinect_allocateVideo(JNIEnv *env, jclass cls) {
 		UNREFERENCED_PARAMETER( env );
 		UNREFERENCED_PARAMETER( cls );
 
@@ -17,7 +21,7 @@ extern "C" {
 
 	}
 
-	JNIEXPORT jbyteArray Java_kinect_Kinect_AllocateDepth(JNIEnv *env, jclass cls) {
+	JNIEXPORT jbyteArray Java_kinect_Kinect_allocateDepth(JNIEnv *env, jclass cls) {
 		UNREFERENCED_PARAMETER( env );
 		UNREFERENCED_PARAMETER( cls );
 
@@ -26,26 +30,27 @@ extern "C" {
 
 	}
 
-	JNIEXPORT bool JNICALL Java_kinect_Kinect_Start(JNIEnv *env, jclass cls) {
+	JNIEXPORT bool JNICALL Java_kinect_Kinect_start(JNIEnv *env, jclass cls) {
 		UNREFERENCED_PARAMETER( env );
 		UNREFERENCED_PARAMETER( cls );
 
 		if(FAILED(Kinect::Init()))
 			return false;
 
+		NuiCameraElevationSetAngle(Kinect::target_sensor_angle);
+
 		return true;
 
 	}
 
-	JNIEXPORT void JNICALL Java_kinect_Kinect_Stop(JNIEnv *env, jclass cls) {
+	JNIEXPORT void JNICALL Java_kinect_Kinect_stop(JNIEnv *env, jclass cls) {
 		UNREFERENCED_PARAMETER( env );
 		UNREFERENCED_PARAMETER( cls );
 		Kinect::Close();
 
 	}
 
-
-	JNIEXPORT jint JNICALL Java_kinect_Kinect_GetNextEvent(JNIEnv *env, jclass cls){
+	JNIEXPORT jint JNICALL Java_kinect_Kinect_getNextEvent(JNIEnv *env, jclass cls){
 		UNREFERENCED_PARAMETER( env );
 		UNREFERENCED_PARAMETER( cls );
 
@@ -64,33 +69,53 @@ extern "C" {
 		return (jint)nEventIdx;
 
 	}
+	
+	JNIEXPORT void JNICALL Java_kinect_Kinect_setSensorAngle(JNIEnv *env, jclass cls, jint a){
+		UNREFERENCED_PARAMETER( env );
+		UNREFERENCED_PARAMETER( cls );
+		if(a>27) a = 27;
+		if(a<-27) a = -27;
+		Kinect::target_sensor_angle = a;
+		NuiCameraElevationSetAngle(a);
+	}
 
-	JNIEXPORT jint JNICALL Java_kinect_Kinect_GetTrackedSkeletonId(JNIEnv *env, jclass cls){
+	JNIEXPORT jint JNICALL Java_kinect_Kinect_getSensorAngle(JNIEnv *env, jclass cls){
+		UNREFERENCED_PARAMETER( env );
+		UNREFERENCED_PARAMETER( cls );
+		LONG angle;
+		HRESULT hr = NuiCameraElevationGetAngle(&angle);
+		return angle;
+	}
+
+	////////////////////////////////////////////////////////////////////////////////////////
+	// SKELETON TRACKING
+	////////////////////////////////////////////////////////////////////////////////////////
+	JNIEXPORT jint JNICALL Java_kinect_skeleton_Skeleton_getTrackedSkeletonId(JNIEnv *env, jclass cls){
 		UNREFERENCED_PARAMETER( env );
 		UNREFERENCED_PARAMETER( cls );
 		return Kinect::tracked_skeleton_id;
 	}
 
 
-	JNIEXPORT jboolean JNICALL Java_kinect_Kinect_IsTrackingSkeleton(JNIEnv *env, jclass cls){
+	JNIEXPORT jboolean JNICALL Java_kinect_skeleton_Skeleton_isTrackingSomeSkeleton(JNIEnv *env, jclass cls){
 		UNREFERENCED_PARAMETER( env );
 		UNREFERENCED_PARAMETER( cls );
 		return (jboolean)Kinect::tracking_skeleton;
 	}
 
-	JNIEXPORT jint JNICALL Java_kinect_Kinect_GetSkeletonTrackingState(JNIEnv *env, jclass cls,jint SkeletonID){
+	JNIEXPORT jint JNICALL Java_kinect_skeleton_Skeleton_getSkeletonTrackingState(JNIEnv *env, jclass cls,jint SkeletonID){
 		UNREFERENCED_PARAMETER( env );
 		UNREFERENCED_PARAMETER( cls );
 		return Kinect::skeleton_frame.SkeletonData[SkeletonID].eTrackingState;
 	}
 
-	JNIEXPORT jint JNICALL Java_kinect_Kinect_GetJointTrackingState(JNIEnv *env, jclass cls,jint SkeletonID, jint JointID){
+	JNIEXPORT jint JNICALL Java_kinect_skeleton_Skeleton_getJointTrackingState(JNIEnv *env, jclass cls,jint SkeletonID, jint JointID){
 		UNREFERENCED_PARAMETER( env );
 		UNREFERENCED_PARAMETER( cls );
 		return Kinect::skeleton_frame.SkeletonData[SkeletonID].eSkeletonPositionTrackingState[JointID];
 	}
 
-	JNIEXPORT jfloat JNICALL Java_kinect_Kinect_GetJointPositionByIndex(JNIEnv *env, jclass cls,jint SkeletonID, jint JointID, jint PositionIndex){
+	JNIEXPORT jfloat JNICALL Java_kinect_skeleton_Skeleton_getJointPositionByIndex(JNIEnv *env, jclass cls,jint SkeletonID, jint JointID, jint PositionIndex){
 		UNREFERENCED_PARAMETER( env );
 		UNREFERENCED_PARAMETER( cls );
 		if(PositionIndex == 0) return Kinect::skeleton_frame.SkeletonData[SkeletonID].SkeletonPositions[JointID].x;
@@ -99,7 +124,7 @@ extern "C" {
 		return 0;
 	}
 
-	JNIEXPORT jfloat JNICALL Java_kinect_Kinect_GetSkeletonNormalToGravityByIndex(JNIEnv *env, jclass cls, jint PositionIndex){
+	JNIEXPORT jfloat JNICALL Java_kinect_skeleton_Skeleton_getSkeletonNormalToGravityByIndex(JNIEnv *env, jclass cls, jint PositionIndex){
 		UNREFERENCED_PARAMETER( env );
 		UNREFERENCED_PARAMETER( cls );
 		if(PositionIndex == 0) return Kinect::skeleton_frame.vNormalToGravity.x;
@@ -108,7 +133,7 @@ extern "C" {
 		return 0;
 	}
 
-	JNIEXPORT jfloat JNICALL Java_kinect_Kinect_GetSkeletonFloorClipPlaneByIndex(JNIEnv *env, jclass cls, jint PositionIndex){
+	JNIEXPORT jfloat JNICALL Java_kinect_skeleton_Skeleton_getSkeletonFloorClipPlaneByIndex(JNIEnv *env, jclass cls, jint PositionIndex){
 		UNREFERENCED_PARAMETER( env );
 		UNREFERENCED_PARAMETER( cls );
 		if(PositionIndex == 0) return Kinect::skeleton_frame.vFloorClipPlane.x;

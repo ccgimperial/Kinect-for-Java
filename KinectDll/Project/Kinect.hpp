@@ -14,6 +14,9 @@ namespace Kinect {
 	int VIDEO_DATA_SIZE_BYTES = 640 * 480 * 4;
 	int DEPTH_DATA_SIZE_BYTES = 320 * 240 * 2;
 
+	// data for pre-startup initialisation
+	int target_sensor_angle = 0;
+
 	// status flags
 	bool tracking_skeleton = false;
 	int tracked_skeleton_id;
@@ -128,19 +131,6 @@ namespace Kinect {
 		if(depth_data != NULL)
 			free(depth_data);
 
-	}
-
-	void SetCameraAngle(int a){
-
-		if(a>27) a = 27;
-		if(a<-27) a = -27;
-		NuiCameraElevationSetAngle(a);
-	}
-
-	int GetCameraAngle(){
-		LONG angle;
-		NuiCameraElevationGetAngle(&angle);
-		return (int)angle;
 	}
 
 	void SaveData(KinectDataType t, wchar_t* file_name){
