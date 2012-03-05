@@ -1,1 +1,29 @@
--- readme text --
+
+Many of my colleagues have lots of Java experience but not much C++ experience.
+This project aims to make Kinect development a little more user-friendly by
+wrapping the Microsoft SDK in Java and removing all things VisualStudio.
+
+Basically:
+Kinect is fun.
+Java is fun.
+C++ isn't fun.
+
+The code's not perfect, by any means - this was a first foray into JNI.
+However, we've found it useful, maybe you will also.
+
+Please feel free to contribute advice, code etc.
+
+INSTALLATION
+------------
+I'm guessing this, but I think you should just need to ...
+- install the Microsoft Kinect SDK.
+- download this wrapper (it's an IntelliJ project).
+- run the "main" file for an example.
+
+Please let us know if this isn't the case.
+
+
+
+
+
+
