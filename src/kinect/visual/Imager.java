@@ -44,7 +44,7 @@ public class Imager {
         for (int row = 0; row < 240; row++) {
             for (int col = 0; col < 320; col++) {
 
-                int depth = Depth.getDepthAtPoint(row, col);
+                int depth = Depth.getDepth(row, col);
                 img_data_depth[index] = 255 * depth / 7000;
 
                 index++;
@@ -60,7 +60,7 @@ public class Imager {
         for (int row = 0; row < 240; row++) {
             for (int col = 0; col < 320; col++) {
 
-                if (Depth.getPlayerIdAtPoint(row, col) != 0)
+                if (Depth.getPlayerId(row, col) != 0)
                     img_data_depth[index] = 255;
                 else
                     img_data_depth[index] = 0;
@@ -75,6 +75,10 @@ public class Imager {
 
     public static BufferedImage getNewVideoImage() {
         return new BufferedImage(640, 480, BufferedImage.TYPE_4BYTE_ABGR);
+    }
+
+    public static BufferedImage getNewDepthImage() {
+        return new BufferedImage(320, 240, BufferedImage.TYPE_4BYTE_ABGR);
     }
 
     public static BufferedImage getNewDepthGreyscale() {
