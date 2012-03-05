@@ -26,14 +26,6 @@ public class Position {
         return r;
     }
 
-    @Override
-    public String toString() {
-        return this.getClass().getSimpleName() + "{"
-                + formatter.format(x) + ","
-                + formatter.format(y) + ","
-                + formatter.format(z) + '}';
-    }
-
     public Position divide(double divisor) {
         Position r = new Position();
         r.x = this.x / divisor;
@@ -48,6 +40,14 @@ public class Position {
         r.y = this.y * divisor;
         r.z = this.z * divisor;
         return r;
+    }
+
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName() + "{"
+                + formatter.format(x) + ","
+                + formatter.format(y) + ","
+                + formatter.format(z) + '}';
     }
 
 }

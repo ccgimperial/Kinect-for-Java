@@ -2,6 +2,7 @@ package kinect.world;
 
 import kinect.geometry.Pixel;
 import kinect.geometry.Position;
+import kinect.geometry.SquareMatrix;
 
 /**
  * Created by IntelliJ IDEA.
@@ -9,70 +10,243 @@ import kinect.geometry.Position;
  * Date: 23/02/12
  * Time: 17:07
  * <p/>
- * Functions for converting between pixel and kinect world positions
+ * Functions for converting between pixel and Kinect world positions
+ *
+ * I recommend you experiment with the camera centres to get something
+ * appropriate for your device.
+ *
  */
 public class Projection {
 
-    // TODO: implement projection stuff from Lionhead Projects
+    // from the NUI header files
+    public final static double NUI_CAMERA_COLOR_NOMINAL_FOCAL_LENGTH_IN_PIXELS = 531.15;
+    public final static double NUI_CAMERA_DEPTH_NOMINAL_FOCAL_LENGTH_IN_PIXELS = 285.63;
 
-    public static Position depthPixelToDepthWorld(Pixel p) {
-        //TODO: implementation
-        return null;
+    public static double ROT_DEGREES = 0.25;  // rotation between cameras
+    public static double TRANSLATION = 0.2; // translation between cameras
+
+    // do all up-front matrix calculation
+    static {
+//        calculateMatrices(320, 248, 160, 120);       // some values for my work Kinect
+        calculateMatrices(314, 256, 160, 120);       // some values for my home Kinect
     }
 
-    public static Pixel depthWorldToDepthPixel(Position p) {
-        //TODO: implementation
-        return null;
+    // store calculated multipliers
+    private static double fx_d;  // intrinsic depth
+    private static double fy_d;
+    private static double cx_d;
+    private static double cy_d;
+    private static double d_fx;  // intrinsic depth inverted
+    private static double d_fy;
+    private static double d_cx;
+    private static double d_cy;
+
+    private static double r_cos;     // rotation between cameras
+    private static double r_sin;
+    private static double r_cos_inv;
+    private static double r_sin_inv;
+
+    private static double fx_v;  // intrinsic video
+    private static double fy_v;
+    private static double cx_v;
+    private static double cy_v;
+    private static double v_fx;  // intrinsic video inverted
+    private static double v_fy;
+    private static double v_cx;
+    private static double v_cy;
+
+
+    /**  Calculates the intrinsic matrix multipliers for the cameras
+     * based on the provided centres for the cameras.
+     * Found that this was the biggest difference between Kinect devices.
+     *
+     * @param video_cx - video camera centre - x
+     * @param video_cy - video camera centre - y
+     * @param depth_cx - depth camera centre - x
+     * @param depth_cy - depth camera centre - y
+     */
+    public static void calculateMatrices(int video_cx, int video_cy, int depth_cx, int depth_cy) {
+
+        ////////////////////////////////////////////////////////////////////////////////////
+        // MULTIPLIERS FOR GOING FROM DEPTH TO RGB
+        ////////////////////////////////////////////////////////////////////////////////////
+
+        // set up depth intrinsic multipliers
+        fx_d = NUI_CAMERA_DEPTH_NOMINAL_FOCAL_LENGTH_IN_PIXELS;
+        fy_d = NUI_CAMERA_DEPTH_NOMINAL_FOCAL_LENGTH_IN_PIXELS;
+        cx_d = depth_cx;
+        cy_d = depth_cy;
+
+        SquareMatrix DepthIntr = new SquareMatrix(4);
+        DepthIntr.set(0,0,fx_d);
+        DepthIntr.set(1,1,fy_d);
+        DepthIntr.set(0,2,cx_d);
+        DepthIntr.set(1,2,cy_d);
+        DepthIntr.set(2,2,1.0);
+        DepthIntr.set(3,3,1.0);
+        SquareMatrix DepthIntrInv = DepthIntr.getInverse();
+        d_fx = DepthIntrInv.at(0,0);
+        d_fy = DepthIntrInv.at(1,1);
+        d_cx = DepthIntrInv.at(0,2);
+        d_cy = DepthIntrInv.at(1,2);
+
+        // set up rotation/translation multipliers
+        r_cos = Math.cos(ROT_DEGREES * Math.PI / 180.0);
+        r_sin = Math.sin(ROT_DEGREES * Math.PI / 180.0);
+
+        ////////////////////////////////////////////////////////////////////////////////////
+        // MULTIPLIERS FOR GOING FROM RGB TO DEPTH
+        ////////////////////////////////////////////////////////////////////////////////////
+
+        // set up rgb intrinsic multipliers
+        fx_v = NUI_CAMERA_COLOR_NOMINAL_FOCAL_LENGTH_IN_PIXELS;
+        fy_v = NUI_CAMERA_COLOR_NOMINAL_FOCAL_LENGTH_IN_PIXELS ;
+        cx_v = video_cx;
+        cy_v = video_cy;
+
+        // set up rgb intrinsic multipliers
+        SquareMatrix VideoIntr = new SquareMatrix(4);
+        VideoIntr.set(0,0,fx_v);
+        VideoIntr.set(1,1,fy_v);
+        VideoIntr.set(0,2,cx_v);
+        VideoIntr.set(1,2,cy_v);
+        VideoIntr.set(2,2,1.0);
+        VideoIntr.set(3,3,1.0);
+        SquareMatrix VideoIntrInv = VideoIntr.getInverse();
+        v_fx = VideoIntrInv.at(0,0);
+        v_fy = VideoIntrInv.at(1,1);
+        v_cx = VideoIntrInv.at(0,2);
+        v_cy = VideoIntrInv.at(1,2);
+
+        // set up rotation/translation multipliers
+        r_cos_inv = Math.cos(-ROT_DEGREES * Math.PI / 180.0);
+        r_sin_inv = Math.sin(-ROT_DEGREES * Math.PI / 180.0);
+
     }
 
-    public static Position videoPixelToVideoWorld(Pixel p) {
-        //TODO: implementation
-        return null;
+
+    public static Position depthPixelToDepthWorld(Pixel p, double d) {
+
+        Position world_point = new Position();
+
+        world_point.x =  d * (d_fx * p.col + d_cx);
+        world_point.y = -d * (d_fy * p.row + d_cy);
+        world_point.z =  d;
+
+        return world_point;
+
     }
 
-    public static Pixel videoWorldToVideoPixel(Position p) {
-        //TODO: implementation
-        return null;
+    public static Position depthPixelToDepthWorld(Pixel p){
+        int d = Depth.getDepth(p);
+        return depthPixelToDepthWorld(p, d);
     }
 
-    public static Position videoWorldToDepthWorld(Position p) {
-        //TODO: implementation
-        return null;
+    public static Pixel depthWorldToDepthPixel(Position dwp) {
+        Pixel pixel = new Pixel();
+        pixel.col = (int) Math.round(( fx_d * dwp.x + cx_d * dwp.z) / dwp.z);
+        pixel.row = (int) Math.round((-fy_d * dwp.y + cy_d * dwp.z) / dwp.z);
+        return pixel;
     }
 
-    public static Position depthWorldToVideoWorld(Position p) {
-        //TODO: implementation
-        return null;
+    public static Position videoPixelToVideoWorld(Pixel p, double d) {
+
+        Position world_point = new Position();
+        world_point.x =  d * (v_fx * p.col + v_cx);
+        world_point.y = -d * (v_fy * p.row + v_cy);
+        world_point.z =  d;
+        return world_point;
+
     }
 
-    public static Position depthPixelToVideoWorld(Pixel p) {
-        //TODO: implementation
-        return null;
+    public static Pixel videoWorldToVideoPixel(Position vwp) {
+
+		Pixel pixel = new Pixel();
+        pixel.col = (int) Math.round((  fx_v * vwp.x + cx_v * vwp.z) / vwp.z);
+        pixel.row = (int) Math.round(( -fy_v * vwp.y + cy_v * vwp.z) / vwp.z);
+		return pixel;
+
     }
 
-    public static Pixel videoWorldToDepthPixel(Position p) {
-        //TODO: implementation
-        return null;
+    public static Position videoWorldToDepthWorld(Position vwp) {
+
+		// see above
+		Position dwp = new Position();
+		vwp.x -= TRANSLATION;  // translate first
+		dwp.x = r_cos_inv * vwp.x + r_sin_inv * vwp.z;
+		dwp.y = vwp.y;  // no movement in y
+		dwp.z = -r_sin_inv * vwp.x + r_cos_inv * vwp.z;
+		return dwp;
     }
 
-    public static Position videoPixelToDepthWorld(Pixel p) {
-        //TODO: implementation
-        return null;
+    public static Position depthWorldToVideoWorld(Position dwp) {
+
+        // world point rotated and translated - assume just along x axis
+        // i.e. a spin in the z axis and an x translation
+        Position vwp = new Position(); // rotated position i.e. pov rgb camera
+        vwp.x =  r_cos * dwp.x + r_sin * dwp.z + TRANSLATION;
+        vwp.y = dwp.y;  // no movement in y
+        vwp.z = -r_sin * dwp.x + r_cos * dwp.z;
+        return vwp;
+
     }
 
-    public static Pixel depthWorldToVideoPixel(Position p) {
-        //TODO: implementation
-        return null;
-    }
+//    public static Position depthPixelToVideoWorld(Pixel p) {
+//        //TODO: implementation
+//        return null;
+//    }
+//
+//    public static Pixel videoWorldToDepthPixel(Position p) {
+//        //TODO: implementation
+//        return null;
+//    }
+//
+//    public static Position videoPixelToDepthWorld(Pixel p) {
+//        //TODO: implementation
+//        return null;
+//    }
+//
+//    public static Pixel depthWorldToVideoPixel(Position p) {
+//        //TODO: implementation
+//        return null;
+//    }
+//
+//    public static Pixel videoPixelToDepthPixel(Pixel p) {
+//        //TODO: implementation
+//        return null;
+//    }
+//
+//    public static Pixel depthPixelToVideoPixel(Pixel p) {
+//        //TODO: implementation
+//        return null;
+//    }
 
-    public static Pixel videoPixelToDepthPixel(Pixel p) {
-        //TODO: implementation
-        return null;
-    }
+//	// colour constants
+//	RGBQUAD proj_red = {0,0,255,0};
+//
+//  RGBQUAD DepthPixelToRgbColour( int x, int y, int depth_in_mm, RGBQUAD* video_image )
+//	{
+//		D3DXVECTOR3 dwp = DepthPixelToDepthWorldPoint(x, y, depth_in_mm);
+//		D3DXVECTOR3 rwp = DepthWorldPointToRgbWorldPoint(dwp);
+//		Vector2i rp = RgbWorldPointToRgbPixel(rwp);
+//
+//		if(rp.x >= 0 && rp.y >= 0 && rp.x < 640 && rp.y < 480)
+//			return video_image[rp.y * 640 + rp.x];
+//		return proj_red;
+//	}
+//
+//	RGBQUAD DepthPixelToGrey( int x, int y, int d) {
+//
+//		BYTE l = 255 - (BYTE)(256*d/0x0fff);
+//
+//		RGBQUAD q;
+//		q.rgbRed = l / 2;
+//		q.rgbBlue = l / 2;
+//		q.rgbGreen = l / 2;
+//		return q;
+//	}
 
-    public static Pixel depthPixelToVideoPixel(Pixel p) {
-        //TODO: implementation
-        return null;
-    }
+
+
 
 }

@@ -1,5 +1,7 @@
 package kinect.geometry;
 
+import java.text.DecimalFormat;
+
 /**
  * Created by IntelliJ IDEA.
  * User: John
@@ -26,6 +28,11 @@ public class Pixel {
         if (col < 0) return false;
         if (col >= 480) return false;
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName() + "{" + row + "," + col + '}';
     }
 
 }

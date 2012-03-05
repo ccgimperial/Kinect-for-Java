@@ -1,6 +1,7 @@
 package kinect.world;
 
 import kinect.Kinect;
+import kinect.geometry.Pixel;
 
 /**
  * Created by IntelliJ IDEA.
@@ -16,17 +17,17 @@ public class Depth {
         return ((a >> 3) & 31) | ((b & 255) << 5);
     }
 
-    public static int getDepthAtPoint(int row, int col) {
+    public static int getDepth(Pixel p) {
 
-        int index = (row * 320 + col) * 2;
+        int index = (p.row * 320 + p.col) * 2;
         byte a = Kinect.DEPTH_BUFFER.get(index);
         byte b = Kinect.DEPTH_BUFFER.get(index + 1);
         return getDepthValue(a, b);
 
     }
 
-    public static int getPlayerIdAtPoint(int row, int col) {
-        int index = (row * 320 + col) * 2;
+    public static int getPlayerId(Pixel p) {
+        int index = (p.row * 320 + p.col) * 2;
         byte byte_a = Kinect.DEPTH_BUFFER.get(index);
         return byte_a & 7;
 
