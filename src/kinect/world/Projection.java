@@ -3,6 +3,9 @@ package kinect.world;
 import kinect.geometry.Pixel;
 import kinect.geometry.Position;
 import kinect.geometry.SquareMatrix;
+import kinect.visual.Imager;
+
+import java.awt.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -27,8 +30,8 @@ public class Projection {
 
     // do all up-front matrix calculation
     static {
-//        calculateMatrices(320, 248, 160, 120);       // some values for my work Kinect
-        calculateMatrices(314, 256, 160, 120);       // some values for my home Kinect
+        calculateMatrices(320, 248, 160, 120);       // some values for my work Kinect
+//        calculateMatrices(314, 256, 160, 120);       // some values for my home Kinect
     }
 
     // store calculated multipliers
@@ -126,15 +129,11 @@ public class Projection {
 
 
     public static Position depthPixelToDepthWorld(Pixel p, double d) {
-
         Position world_point = new Position();
-
         world_point.x =  d * (d_fx * p.col + d_cx);
         world_point.y = -d * (d_fy * p.row + d_cy);
         world_point.z =  d;
-
         return world_point;
-
     }
 
     public static Position depthPixelToDepthWorld(Pixel p){
@@ -161,22 +160,22 @@ public class Projection {
 
     public static Pixel videoWorldToVideoPixel(Position vwp) {
 
-		Pixel pixel = new Pixel();
+        Pixel pixel = new Pixel();
         pixel.col = (int) Math.round((  fx_v * vwp.x + cx_v * vwp.z) / vwp.z);
         pixel.row = (int) Math.round(( -fy_v * vwp.y + cy_v * vwp.z) / vwp.z);
-		return pixel;
+        return pixel;
 
     }
 
     public static Position videoWorldToDepthWorld(Position vwp) {
 
-		// see above
-		Position dwp = new Position();
-		vwp.x -= TRANSLATION;  // translate first
-		dwp.x = r_cos_inv * vwp.x + r_sin_inv * vwp.z;
-		dwp.y = vwp.y;  // no movement in y
-		dwp.z = -r_sin_inv * vwp.x + r_cos_inv * vwp.z;
-		return dwp;
+        // see above
+        Position dwp = new Position();
+        vwp.x -= TRANSLATION;  // translate first
+        dwp.x = r_cos_inv * vwp.x + r_sin_inv * vwp.z;
+        dwp.y = vwp.y;  // no movement in y
+        dwp.z = -r_sin_inv * vwp.x + r_cos_inv * vwp.z;
+        return dwp;
     }
 
     public static Position depthWorldToVideoWorld(Position dwp) {
@@ -191,62 +190,19 @@ public class Projection {
 
     }
 
-//    public static Position depthPixelToVideoWorld(Pixel p) {
-//        //TODO: implementation
-//        return null;
-//    }
-//
-//    public static Pixel videoWorldToDepthPixel(Position p) {
-//        //TODO: implementation
-//        return null;
-//    }
-//
-//    public static Position videoPixelToDepthWorld(Pixel p) {
-//        //TODO: implementation
-//        return null;
-//    }
-//
-//    public static Pixel depthWorldToVideoPixel(Position p) {
-//        //TODO: implementation
-//        return null;
-//    }
-//
-//    public static Pixel videoPixelToDepthPixel(Pixel p) {
-//        //TODO: implementation
-//        return null;
-//    }
-//
-//    public static Pixel depthPixelToVideoPixel(Pixel p) {
-//        //TODO: implementation
-//        return null;
-//    }
+    // colour constants
+    static final int[] red = {255,0,0};
 
-//	// colour constants
-//	RGBQUAD proj_red = {0,0,255,0};
-//
-//  RGBQUAD DepthPixelToRgbColour( int x, int y, int depth_in_mm, RGBQUAD* video_image )
-//	{
-//		D3DXVECTOR3 dwp = DepthPixelToDepthWorldPoint(x, y, depth_in_mm);
-//		D3DXVECTOR3 rwp = DepthWorldPointToRgbWorldPoint(dwp);
-//		Vector2i rp = RgbWorldPointToRgbPixel(rwp);
-//
-//		if(rp.x >= 0 && rp.y >= 0 && rp.x < 640 && rp.y < 480)
-//			return video_image[rp.y * 640 + rp.x];
-//		return proj_red;
-//	}
-//
-//	RGBQUAD DepthPixelToGrey( int x, int y, int d) {
-//
-//		BYTE l = 255 - (BYTE)(256*d/0x0fff);
-//
-//		RGBQUAD q;
-//		q.rgbRed = l / 2;
-//		q.rgbBlue = l / 2;
-//		q.rgbGreen = l / 2;
-//		return q;
-//	}
+    public static int[] depthPixelToVideoColour( Pixel dp, double d)
+    {
+        Position dwp = depthPixelToDepthWorld(dp, d);
+        Position vwp = depthWorldToVideoWorld(dwp);
+        Pixel vp = videoWorldToVideoPixel(vwp);
 
-
+        if(vp.isInBounds640())
+            return Imager.getVideoColour(vp);
+        return red;
+    }
 
 
 }

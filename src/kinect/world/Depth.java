@@ -18,20 +18,30 @@ public class Depth {
     }
 
     public static int getDepth(Pixel p) {
-
         int index = (p.row * 320 + p.col) * 2;
         byte a = Kinect.DEPTH_BUFFER.get(index);
         byte b = Kinect.DEPTH_BUFFER.get(index + 1);
         return getDepthValue(a, b);
+    }
 
+    public static int getDepth(int row, int col) {
+        int index = (row * 320 + col) * 2;
+        byte a = Kinect.DEPTH_BUFFER.get(index);
+        byte b = Kinect.DEPTH_BUFFER.get(index + 1);
+        return getDepthValue(a, b);
     }
 
     public static int getPlayerId(Pixel p) {
         int index = (p.row * 320 + p.col) * 2;
         byte byte_a = Kinect.DEPTH_BUFFER.get(index);
         return byte_a & 7;
-
     }
 
+
+    public static int getPlayerId(int row, int col) {
+        int index = (row * 320 + col) * 2;
+        byte byte_a = Kinect.DEPTH_BUFFER.get(index);
+        return byte_a & 7;
+    }
 
 }

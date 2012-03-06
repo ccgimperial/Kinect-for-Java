@@ -16,17 +16,17 @@ public class Pixel {
 
     public boolean isInBounds320() {
         if (row < 0) return false;
-        if (row >= 320) return false;
+        if (row >= 240) return false;
         if (col < 0) return false;
-        if (col >= 240) return false;
+        if (col >= 320) return false;
         return true;
     }
 
     public boolean isInBounds640() {
         if (row < 0) return false;
-        if (row >= 640) return false;
+        if (row >= 480) return false;
         if (col < 0) return false;
-        if (col >= 480) return false;
+        if (col >= 640) return false;
         return true;
     }
 

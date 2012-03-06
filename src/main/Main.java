@@ -37,14 +37,14 @@ public class Main implements KinectObserver {
 
     // implement the Depth Event Handler
     public void DepthEvent() {
-        Imager.UpdateImageWithDepth(img_depth);
-        Imager.UpdateImageWithPlayer(img_player);
+        Imager.updateGrey320ImageWithDepthGrey(img_depth);
+        Imager.updateGrey320ImageWithPlayerMask(img_player);
         frame.repaint();
     }
 
     // implement the Video Event Handler
     public void VideoEvent() {
-        Imager.UpdateImageWithVideo(img_video);
+        Imager.updateColour640ImageWithVideo(img_video);
         frame.repaint();
     }
 
