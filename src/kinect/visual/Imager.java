@@ -2,11 +2,17 @@ package kinect.visual;
 
 import kinect.Kinect;
 import kinect.geometry.Pixel;
+import kinect.geometry.Position;
+import kinect.skeleton.Joint;
+import kinect.skeleton.Skeleton;
 import kinect.world.Depth;
 import kinect.world.Projection;
 
+import java.awt.*;
+import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 
 /**
  * Created by IntelliJ IDEA.
@@ -152,7 +158,7 @@ public class Imager {
                 int pid = Depth.getPlayerId(pd);
 
                 int[] c = Projection.depthPixelToVideoColour(pd,d);
-                
+
                 img_data_depth_rgb[index] = c[0];
                 img_data_depth_rgb[index + 1] = c[1];
                 img_data_depth_rgb[index + 2] = c[2];
@@ -167,9 +173,9 @@ public class Imager {
 
         img_depth.getRaster().setPixels(0,0,320,240,img_data_depth_rgb);
 
-    }    
-    
-    
+    }
+
+
 
     /** returns the colour stored at the requested pixel as an int[]
      *
@@ -184,6 +190,39 @@ public class Imager {
         colour[2] = Kinect.VIDEO_BUFFER.get(index);
         return colour;
     }
+
+    public static void updateColour320ImageWithSkeleton(BufferedImage img_depth, Skeleton s){
+
+        Graphics2D g = img_depth.createGraphics();
+
+        for (Joint joint : s.getJoints()) {
+
+            Position dwp = joint.getPosition();
+            Pixel dp = Projection.depthWorldToDepthPixel(dwp);
+            Ellipse2D.Double e = new Ellipse2D.Double(dp.col - 5, dp.row - 5, 10, 10);
+
+            switch (joint.getTrackingState()){
+                case Joint.POSITION_TRACKED:
+                    g.setColor(Color.green);
+                    break;
+                case Joint.POSITION_INFERRED:
+                    g.setColor(Color.orange);
+                    break;
+                case Joint.POSITION_NOT_TRACKED:
+                default:
+                    g.setColor(Color.red);
+                    break;
+
+            }
+            g.fill(e);
+        }
+
+        g.dispose();
+
+    }
+
+
+
 
 
     /////////////////////////////////////////////////////////////////////////////////////////////

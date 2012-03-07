@@ -109,21 +109,6 @@ extern "C" {
 		return Kinect::skeleton_frame.SkeletonData[SkeletonID-1].eTrackingState;
 	}
 
-	JNIEXPORT jint JNICALL Java_kinect_skeleton_Skeleton_getJointTrackingState(JNIEnv *env, jclass cls,jint SkeletonID, jint JointID){
-		UNREFERENCED_PARAMETER( env );
-		UNREFERENCED_PARAMETER( cls );
-		return Kinect::skeleton_frame.SkeletonData[SkeletonID-1].eSkeletonPositionTrackingState[JointID];
-	}
-
-	JNIEXPORT jfloat JNICALL Java_kinect_skeleton_Skeleton_getJointPositionByIndex(JNIEnv *env, jclass cls,jint SkeletonID, jint JointID, jint PositionIndex){
-		UNREFERENCED_PARAMETER( env );
-		UNREFERENCED_PARAMETER( cls );
-		if(PositionIndex == 0) return Kinect::skeleton_frame.SkeletonData[SkeletonID-1].SkeletonPositions[JointID].x;
-		if(PositionIndex == 1) return Kinect::skeleton_frame.SkeletonData[SkeletonID-1].SkeletonPositions[JointID].y;
-		if(PositionIndex == 2) return Kinect::skeleton_frame.SkeletonData[SkeletonID-1].SkeletonPositions[JointID].z;
-		return 0;
-	}
-
 	JNIEXPORT jfloat JNICALL Java_kinect_skeleton_Skeleton_getSkeletonNormalToGravityByIndex(JNIEnv *env, jclass cls, jint PositionIndex){
 		UNREFERENCED_PARAMETER( env );
 		UNREFERENCED_PARAMETER( cls );
@@ -142,8 +127,20 @@ extern "C" {
 		return 0;
 	}
 
+	JNIEXPORT jint JNICALL Java_kinect_skeleton_Joint_getJointTrackingState(JNIEnv *env, jclass cls,jint SkeletonID, jint JointID){
+		UNREFERENCED_PARAMETER( env );
+		UNREFERENCED_PARAMETER( cls );
+		return Kinect::skeleton_frame.SkeletonData[SkeletonID-1].eSkeletonPositionTrackingState[JointID];
+	}
 
-
+	JNIEXPORT jfloat JNICALL Java_kinect_skeleton_Joint_getJointPositionByIndex(JNIEnv *env, jclass cls,jint SkeletonID, jint JointID, jint PositionIndex){
+		UNREFERENCED_PARAMETER( env );
+		UNREFERENCED_PARAMETER( cls );
+		if(PositionIndex == 0) return Kinect::skeleton_frame.SkeletonData[SkeletonID-1].SkeletonPositions[JointID].x;
+		if(PositionIndex == 1) return Kinect::skeleton_frame.SkeletonData[SkeletonID-1].SkeletonPositions[JointID].y;
+		if(PositionIndex == 2) return Kinect::skeleton_frame.SkeletonData[SkeletonID-1].SkeletonPositions[JointID].z;
+		return 0;
+	}
 
 }
 

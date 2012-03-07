@@ -3,6 +3,7 @@ package kinect.world;
 import kinect.geometry.Pixel;
 import kinect.geometry.Position;
 import kinect.geometry.SquareMatrix;
+import kinect.skeleton.Joint;
 import kinect.visual.Imager;
 
 /**
@@ -203,4 +204,8 @@ public class Projection {
     }
 
 
+    public static Pixel depthWorldToVideoPixel(Position dwp) {
+        Position vwp = depthWorldToVideoWorld(dwp);
+        return videoWorldToVideoPixel(vwp);
+    }
 }

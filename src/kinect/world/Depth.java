@@ -3,6 +3,12 @@ package kinect.world;
 import kinect.Kinect;
 import kinect.geometry.Pixel;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.channels.FileChannel;
+
 /**
  * Created by IntelliJ IDEA.
  * User: John

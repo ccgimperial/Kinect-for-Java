@@ -1,7 +1,10 @@
 package kinect;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 
 public final class Kinect {
 
@@ -73,6 +76,19 @@ public final class Kinect {
     }
 
     public static native void stop();
+
+    public static void writeDepthToFile(File file) throws IOException {
+        FileChannel fc = new FileOutputStream(file, false).getChannel();
+        fc.write(Kinect.DEPTH_BUFFER);
+        fc.close();
+    }
+
+    public static void writeVideoToFile(File file) throws IOException {
+        FileChannel fc = new FileOutputStream(file, false).getChannel();
+        fc.write(Kinect.VIDEO_BUFFER);
+        fc.close();
+    }
+
 
     ///////////////////////////////////////////////////////////////////////////////
     // PUBLIC NATIVE INTERFACE

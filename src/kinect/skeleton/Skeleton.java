@@ -2,6 +2,12 @@ package kinect.skeleton;
 
 import kinect.geometry.Position;
 
+import java.io.File;
+import java.io.FileDescriptor;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+
 public class Skeleton {
 
     static final int SKELETON_COUNT = 6;
@@ -9,10 +15,7 @@ public class Skeleton {
     static final int SKELETON_NOT_TRACKED = 0;
     static final int SKELETON_POSITION_ONLY = 1;
     static final int SKELETON_TRACKED = 2;
-    // POSITION_TRACKING_STATE
-    static final int POSITION_NOT_TRACKED = 0;
-    static final int POSITION_INFERRED = 1;
-    static final int POSITION_TRACKED = 2;
+
     // POSITION_INDEX
     static final int POSITION_HIP_CENTER = 0;
     static final int POSITION_SPINE = 1;
@@ -36,26 +39,28 @@ public class Skeleton {
     static final int POSITION_FOOT_RIGHT = 19;
     static final int POSITION_COUNT = 20;
 
-    public Joint FOOT_LEFT;
-    public Joint FOOT_RIGHT;
-    public Joint ANKLE_LEFT;
-    public Joint ANKLE_RIGHT;
-    public Joint KNEE_LEFT;
-    public Joint KNEE_RIGHT;
-    public Joint HIP_LEFT;
-    public Joint HIP_RIGHT;
-    public Joint HIP_CENTRE;
-    public Joint HAND_LEFT;
-    public Joint HAND_RIGHT;
-    public Joint WRIST_LEFT;
-    public Joint WRIST_RIGHT;
-    public Joint ELBOW_LEFT;
-    public Joint ELBOW_RIGHT;
-    public Joint SHOULDER_LEFT;
-    public Joint SHOULDER_RIGHT;
-    public Joint SHOULDER_CENTRE;
-    public Joint SPINE;
-    public Joint HEAD;
+    private Joint[] joints = null;
+    
+    public Joint getFootLeft(){return joints[POSITION_FOOT_LEFT];}
+    public Joint getFootRight(){return joints[POSITION_FOOT_RIGHT];}
+    public Joint getAnkleLeft(){return joints[POSITION_ANKLE_LEFT];}
+    public Joint getAnkleRight(){return joints[POSITION_ANKLE_RIGHT];}
+    public Joint getKneeLeft(){return joints[POSITION_KNEE_LEFT];}
+    public Joint getKneeRight(){return joints[POSITION_KNEE_RIGHT];}
+    public Joint getHipLeft(){return joints[POSITION_HIP_LEFT];}
+    public Joint getHipRight(){return joints[POSITION_HIP_RIGHT];}
+    public Joint getHipCenter(){return joints[POSITION_HIP_CENTER];}
+    public Joint getHandLeft(){return joints[POSITION_HAND_LEFT];}
+    public Joint getHandRight(){return joints[POSITION_HAND_RIGHT];}
+    public Joint getWristLeft(){return joints[POSITION_WRIST_LEFT];}
+    public Joint getWristRight(){return joints[POSITION_WRIST_RIGHT];}
+    public Joint getElbowLeft(){return joints[POSITION_ELBOW_LEFT];}
+    public Joint getElbowRight(){return joints[POSITION_ELBOW_RIGHT];}
+    public Joint getShoulderLeft(){return joints[POSITION_SHOULDER_LEFT];}
+    public Joint getShoulderRight(){return joints[POSITION_SHOULDER_RIGHT];}
+    public Joint getShoulderCenter(){return joints[POSITION_SHOULDER_CENTER];}
+    public Joint getHead(){return joints[POSITION_HEAD];}
+    public Joint getSpine(){return joints[POSITION_SPINE];}
 
     ////////////////////////////////////////////////////////////////////
     // ENOUGH STATIC STORAGE FOR 7 SKELETONS
@@ -95,10 +100,7 @@ public class Skeleton {
     //////////////////////////////////////////////////////////////////////////////////////
     public final static native boolean isTrackingSomeSkeleton();
     public final static native int getTrackedSkeletonId();
-
     final static native int getSkeletonTrackingState(int SkeletonID);
-    final static native int getJointTrackingState(int SkeletonID, int JointID);
-    final static native float getJointPositionByIndex(int SkeletonID, int JointID, int PositionIndex);
     final static native float getSkeletonNormalToGravityByIndex(int PositionIndex);
     final static native float getSkeletonFloorClipPlaneByIndex(int PositionIndex);
 
@@ -115,26 +117,10 @@ public class Skeleton {
     
     private Skeleton(int skeletonID) {
         ID = skeletonID;
-        FOOT_LEFT = new Joint(this,Skeleton.POSITION_FOOT_LEFT);
-        FOOT_RIGHT = new Joint(this,Skeleton.POSITION_FOOT_RIGHT);
-        ANKLE_LEFT = new Joint(this,Skeleton.POSITION_ANKLE_LEFT);
-        ANKLE_RIGHT = new Joint(this,Skeleton.POSITION_ANKLE_RIGHT);
-        KNEE_LEFT = new Joint(this,Skeleton.POSITION_KNEE_LEFT);
-        KNEE_RIGHT = new Joint(this,Skeleton.POSITION_KNEE_RIGHT);
-        HIP_LEFT = new Joint(this,Skeleton.POSITION_HIP_LEFT);
-        HIP_RIGHT = new Joint(this,Skeleton.POSITION_HIP_RIGHT);
-        HIP_CENTRE = new Joint(this,Skeleton.POSITION_HIP_CENTER);
-        HAND_LEFT = new Joint(this,Skeleton.POSITION_HAND_LEFT);
-        HAND_RIGHT = new Joint(this,Skeleton.POSITION_HAND_RIGHT);
-        WRIST_LEFT = new Joint(this,Skeleton.POSITION_WRIST_LEFT);
-        WRIST_RIGHT = new Joint(this,Skeleton.POSITION_WRIST_RIGHT);
-        ELBOW_LEFT = new Joint(this,Skeleton.POSITION_ELBOW_LEFT);
-        ELBOW_RIGHT = new Joint(this,Skeleton.POSITION_ELBOW_RIGHT);
-        SHOULDER_LEFT = new Joint(this,Skeleton.POSITION_SHOULDER_LEFT);
-        SHOULDER_RIGHT = new Joint(this,Skeleton.POSITION_SHOULDER_RIGHT);
-        SHOULDER_CENTRE = new Joint(this,Skeleton.POSITION_SHOULDER_CENTER);
-        SPINE = new Joint(this,Skeleton.POSITION_SPINE);
-        HEAD = new Joint(this,Skeleton.POSITION_HEAD);
+        joints = new Joint[POSITION_COUNT];
+        for (int i = 0; i < joints.length; i++) {
+            joints[i] = new Joint(this,i);
+        }
     }
 
     public int getTrackingState() {
@@ -145,22 +131,6 @@ public class Skeleton {
         return getSkeletonTrackingState(ID) == SKELETON_TRACKED;
     }
 
-    public int getJointTrackingState(int JointID) {
-        return getJointTrackingState(ID, JointID);
-    }
-
-    public boolean isTrackingJoint(int JointID) {
-        return isTracking()
-                && getJointTrackingState(JointID) == POSITION_TRACKED;
-    }
-
-    public Position getJointPosition(int JointID) {
-        Position p = new Position();
-        p.x = getJointPositionByIndex(ID, JointID, 0);
-        p.y = getJointPositionByIndex(ID, JointID, 1);
-        p.z = getJointPositionByIndex(ID, JointID, 2);
-        return p;
-    }
 
     public static Position getNormalToGravity_NOT_WORKING() {
         Position p = new Position();
@@ -178,5 +148,23 @@ public class Skeleton {
         return p;
     }
 
+
+    public Joint[] getJoints() {
+        return joints;
+    }
+
+    public void writeToFile(File output_file) throws IOException {
+
+        FileWriter fwt = new FileWriter(output_file);
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < joints.length; i++) {
+            sb.append(joints[i].toString());
+            sb.append("\n");
+        }
+        fwt.write(sb.toString());
+        fwt.flush();
+        fwt.close();
+
+    }
 
 }

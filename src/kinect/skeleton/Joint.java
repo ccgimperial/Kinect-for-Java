@@ -15,6 +15,12 @@ import kinect.geometry.Position;
  */
 public class Joint {
 
+    // POSITION_TRACKING_STATE
+    public static final int POSITION_NOT_TRACKED = 0;
+    public static final int POSITION_INFERRED = 1;
+    public static final int POSITION_TRACKED = 2;
+
+
     private Skeleton skeleton;
     private int JointID;
 
@@ -24,11 +30,16 @@ public class Joint {
     }
 
     public Position getPosition() {
-        return skeleton.getJointPosition(JointID);
+        Position p = new Position();
+        p.x = getJointPositionByIndex(skeleton.ID, JointID, 0);
+        p.y = getJointPositionByIndex(skeleton.ID, JointID, 1);
+        p.z = getJointPositionByIndex(skeleton.ID, JointID, 2);
+        return p;
     }
 
     public boolean isTracking() {
-        return skeleton.isTrackingJoint(JointID);
+        return skeleton.isTracking()
+                && getTrackingState() == POSITION_TRACKED;
     }
 
     public double getHeight(Plane floor) {
@@ -38,4 +49,22 @@ public class Joint {
     public Skeleton getSkeleton() {
         return skeleton;
     }
+
+    public int getTrackingState() {
+        return getJointTrackingState(skeleton.ID,JointID);
+    }
+
+    @Override
+    public String toString() {
+        return "Joint{" + JointID + "," + getTrackingState() + "," + getPosition() + '}';
+    }
+
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////
+    // NATIVE INTERFACE
+    //////////////////////////////////////////////////////////////////////////////////////////////////
+    static native int getJointTrackingState(int SkeletonID, int JointID);
+    static native float getJointPositionByIndex(int SkeletonID, int JointID, int PositionIndex);
+
+
 }
