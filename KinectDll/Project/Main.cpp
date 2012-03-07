@@ -83,7 +83,7 @@ extern "C" {
 		UNREFERENCED_PARAMETER( env );
 		UNREFERENCED_PARAMETER( cls );
 		LONG angle;
-		HRESULT hr = NuiCameraElevationGetAngle(&angle);
+		NuiCameraElevationGetAngle(&angle);
 		return angle;
 	}
 
@@ -106,21 +106,21 @@ extern "C" {
 	JNIEXPORT jint JNICALL Java_kinect_skeleton_Skeleton_getSkeletonTrackingState(JNIEnv *env, jclass cls,jint SkeletonID){
 		UNREFERENCED_PARAMETER( env );
 		UNREFERENCED_PARAMETER( cls );
-		return Kinect::skeleton_frame.SkeletonData[SkeletonID].eTrackingState;
+		return Kinect::skeleton_frame.SkeletonData[SkeletonID-1].eTrackingState;
 	}
 
 	JNIEXPORT jint JNICALL Java_kinect_skeleton_Skeleton_getJointTrackingState(JNIEnv *env, jclass cls,jint SkeletonID, jint JointID){
 		UNREFERENCED_PARAMETER( env );
 		UNREFERENCED_PARAMETER( cls );
-		return Kinect::skeleton_frame.SkeletonData[SkeletonID].eSkeletonPositionTrackingState[JointID];
+		return Kinect::skeleton_frame.SkeletonData[SkeletonID-1].eSkeletonPositionTrackingState[JointID];
 	}
 
 	JNIEXPORT jfloat JNICALL Java_kinect_skeleton_Skeleton_getJointPositionByIndex(JNIEnv *env, jclass cls,jint SkeletonID, jint JointID, jint PositionIndex){
 		UNREFERENCED_PARAMETER( env );
 		UNREFERENCED_PARAMETER( cls );
-		if(PositionIndex == 0) return Kinect::skeleton_frame.SkeletonData[SkeletonID].SkeletonPositions[JointID].x;
-		if(PositionIndex == 1) return Kinect::skeleton_frame.SkeletonData[SkeletonID].SkeletonPositions[JointID].y;
-		if(PositionIndex == 2) return Kinect::skeleton_frame.SkeletonData[SkeletonID].SkeletonPositions[JointID].z;
+		if(PositionIndex == 0) return Kinect::skeleton_frame.SkeletonData[SkeletonID-1].SkeletonPositions[JointID].x;
+		if(PositionIndex == 1) return Kinect::skeleton_frame.SkeletonData[SkeletonID-1].SkeletonPositions[JointID].y;
+		if(PositionIndex == 2) return Kinect::skeleton_frame.SkeletonData[SkeletonID-1].SkeletonPositions[JointID].z;
 		return 0;
 	}
 
@@ -205,11 +205,13 @@ void depth_event(void) {
 void skeleton_event(void){
 
 	NuiSkeletonGetNextFrame( 0, &Kinect::skeleton_frame);
+	Kinect::tracked_skeleton_id = 0;
+	Kinect::tracking_skeleton = false;
 	for( int i = 0 ; i < NUI_SKELETON_COUNT ; i++ )
 	{
 		if( Kinect::skeleton_frame.SkeletonData[i].eTrackingState == NUI_SKELETON_TRACKED ){
 			Kinect::tracking_skeleton = true;
-			Kinect::tracked_skeleton_id = i;
+			Kinect::tracked_skeleton_id = i + 1;
 			break;
 		}
 	}

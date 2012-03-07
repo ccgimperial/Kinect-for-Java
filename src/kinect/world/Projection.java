@@ -5,8 +5,6 @@ import kinect.geometry.Position;
 import kinect.geometry.SquareMatrix;
 import kinect.visual.Imager;
 
-import java.awt.*;
-
 /**
  * Created by IntelliJ IDEA.
  * User: John
@@ -22,16 +20,17 @@ import java.awt.*;
 public class Projection {
 
     // from the NUI header files
-    public final static double NUI_CAMERA_COLOR_NOMINAL_FOCAL_LENGTH_IN_PIXELS = 531.15;
-    public final static double NUI_CAMERA_DEPTH_NOMINAL_FOCAL_LENGTH_IN_PIXELS = 285.63;
+    public static double NUI_CAMERA_COLOR_NOMINAL_FOCAL_LENGTH_IN_PIXELS = 531.15;
+    public static double NUI_CAMERA_DEPTH_NOMINAL_FOCAL_LENGTH_IN_PIXELS = 285.63;
 
     public static double ROT_DEGREES = 0.25;  // rotation between cameras
-    public static double TRANSLATION = 0.2; // translation between cameras
+    public static double TRANSLATION = 0.25; // translation between cameras
 
     // do all up-front matrix calculation
     static {
-        calculateMatrices(320, 248, 160, 120);       // some values for my work Kinect
-//        calculateMatrices(314, 256, 160, 120);       // some values for my home Kinect
+//        calculateMatrices(320, 248, 160, 120);       // some values for my work Kinect
+        calculateMatrices(314, 256, 160, 120);       // some values for my home Kinect
+
     }
 
     // store calculated multipliers
@@ -192,7 +191,6 @@ public class Projection {
 
     // colour constants
     static final int[] red = {255,0,0};
-
     public static int[] depthPixelToVideoColour( Pixel dp, double d)
     {
         Position dwp = depthPixelToDepthWorld(dp, d);

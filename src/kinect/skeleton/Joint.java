@@ -18,18 +18,13 @@ public class Joint {
     private Skeleton skeleton;
     private int JointID;
 
-    public Joint(int jointID) {
-        skeleton = new Skeleton();
-        setJointID(jointID);
-    }
-
     public Joint(int skeletonID, int jointID) {
         skeleton = new Skeleton(skeletonID);
         setJointID(jointID);
     }
 
     public void setSkeletonID(int SkeletonID) {
-        skeleton.setSkeletonID(SkeletonID);
+        skeleton.ID = SkeletonID;
     }
 
     public void setJointID(int jointID) {
@@ -46,5 +41,9 @@ public class Joint {
 
     public double getHeight(Plane floor) {
         return floor.getDistanceFromPlane(getPosition());
+    }
+
+    public int getSkeletonId() {
+        return skeleton.ID;
     }
 }

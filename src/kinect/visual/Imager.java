@@ -2,11 +2,9 @@ package kinect.visual;
 
 import kinect.Kinect;
 import kinect.geometry.Pixel;
-import kinect.geometry.Position;
 import kinect.world.Depth;
 import kinect.world.Projection;
 
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.nio.ByteBuffer;
 
@@ -152,13 +150,17 @@ public class Imager {
 
                 int d = Depth.getDepth(pd);
                 int pid = Depth.getPlayerId(pd);
-                int[] c = {0,255,0};
-                if(pid == playerId)
-                    c = Projection.depthPixelToVideoColour(pd,d);
+
+                int[] c = Projection.depthPixelToVideoColour(pd,d);
+                
                 img_data_depth_rgb[index] = c[0];
                 img_data_depth_rgb[index + 1] = c[1];
                 img_data_depth_rgb[index + 2] = c[2];
-                img_data_depth_rgb[index + 3] = 255;
+                if(pid == playerId)
+                    img_data_depth_rgb[index + 3] = 255;
+                else
+                    img_data_depth_rgb[index + 3] = 0;
+
                 index+=4;
             }
         }

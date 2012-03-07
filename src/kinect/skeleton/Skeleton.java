@@ -36,6 +36,26 @@ public class Skeleton {
     public static final int POSITION_FOOT_RIGHT = 19;
     public static final int POSITION_COUNT = 20;
 
+    public Joint FOOT_LEFT;
+    public Joint FOOT_RIGHT;
+    public Joint ANKLE_LEFT;
+    public Joint ANKLE_RIGHT;
+    public Joint KNEE_LEFT;
+    public Joint KNEE_RIGHT;
+    public Joint HIP_LEFT;
+    public Joint HIP_RIGHT;
+    public Joint HIP_CENTRE;
+    public Joint HAND_LEFT;
+    public Joint HAND_RIGHT;
+    public Joint WRIST_LEFT;
+    public Joint WRIST_RIGHT;
+    public Joint ELBOW_LEFT;
+    public Joint ELBOW_RIGHT;
+    public Joint SHOULDER_LEFT;
+    public Joint SHOULDER_RIGHT;
+    public Joint SHOULDER_CENTRE;
+    public Joint SPINE;
+    public Joint HEAD;
 
 //    typedef struct _FRAME
 //    {
@@ -63,60 +83,67 @@ public class Skeleton {
     // NATIVE INTERFACE
     //////////////////////////////////////////////////////////////////////////////////////
     public final static native boolean isTrackingSomeSkeleton();
-
     public final static native int getTrackedSkeletonId();
 
     final static native int getSkeletonTrackingState(int SkeletonID);
-
     final static native int getJointTrackingState(int SkeletonID, int JointID);
-
     final static native float getJointPositionByIndex(int SkeletonID, int JointID, int PositionIndex);
-
     final static native float getSkeletonNormalToGravityByIndex(int PositionIndex);
-
     final static native float getSkeletonFloorClipPlaneByIndex(int PositionIndex);
 
 
     //////////////////////////////////////////////////////////////////////////////////////
     // INSTANCE SPECIFIC
     //////////////////////////////////////////////////////////////////////////////////////
-    private int SkeletonID;
-
-    public void setSkeletonID(int skeletonID) {
-        SkeletonID = skeletonID;
-    }
-
-    public Skeleton() {
-        setSkeletonID(getTrackedSkeletonId());
-    }
+    public int ID;
 
     public Skeleton(int skeletonID) {
-        setSkeletonID(skeletonID);
-    }
-
-    public Position getJointPosition(int JointID) {
-        Position p = new Position();
-        p.x = getJointPositionByIndex(SkeletonID, JointID, 0);
-        p.y = getJointPositionByIndex(SkeletonID, JointID, 1);
-        p.z = getJointPositionByIndex(SkeletonID, JointID, 2);
-        return p;
+        ID = skeletonID;
+        FOOT_LEFT = new Joint(ID,Skeleton.POSITION_FOOT_LEFT);
+        FOOT_RIGHT = new Joint(ID,Skeleton.POSITION_FOOT_RIGHT);
+        ANKLE_LEFT = new Joint(ID,Skeleton.POSITION_ANKLE_LEFT);
+        ANKLE_RIGHT = new Joint(ID,Skeleton.POSITION_ANKLE_RIGHT);
+        KNEE_LEFT = new Joint(ID,Skeleton.POSITION_KNEE_LEFT);
+        KNEE_RIGHT = new Joint(ID,Skeleton.POSITION_KNEE_RIGHT);
+        HIP_LEFT = new Joint(ID,Skeleton.POSITION_HIP_LEFT);
+        HIP_RIGHT = new Joint(ID,Skeleton.POSITION_HIP_RIGHT);
+        HIP_CENTRE = new Joint(ID,Skeleton.POSITION_HIP_CENTER);
+        HAND_LEFT = new Joint(ID,Skeleton.POSITION_HAND_LEFT);
+        HAND_RIGHT = new Joint(ID,Skeleton.POSITION_HAND_RIGHT);
+        WRIST_LEFT = new Joint(ID,Skeleton.POSITION_WRIST_LEFT);
+        WRIST_RIGHT = new Joint(ID,Skeleton.POSITION_WRIST_RIGHT);
+        ELBOW_LEFT = new Joint(ID,Skeleton.POSITION_ELBOW_LEFT);
+        ELBOW_RIGHT = new Joint(ID,Skeleton.POSITION_ELBOW_RIGHT);
+        SHOULDER_LEFT = new Joint(ID,Skeleton.POSITION_SHOULDER_LEFT);
+        SHOULDER_RIGHT = new Joint(ID,Skeleton.POSITION_SHOULDER_RIGHT);
+        SHOULDER_CENTRE = new Joint(ID,Skeleton.POSITION_SHOULDER_CENTER);
+        SPINE = new Joint(ID,Skeleton.POSITION_SPINE);
+        HEAD = new Joint(ID,Skeleton.POSITION_HEAD);
     }
 
     public int getTrackingState() {
-        return getSkeletonTrackingState(SkeletonID);
+        return getSkeletonTrackingState(ID);
     }
 
     public boolean isTracking() {
-        return getSkeletonTrackingState(SkeletonID) == SKELETON_TRACKED;
+        return getSkeletonTrackingState(ID) == SKELETON_TRACKED;
     }
 
     public int getJointTrackingState(int JointID) {
-        return getJointTrackingState(SkeletonID, JointID);
+        return getJointTrackingState(ID, JointID);
     }
 
     public boolean isTrackingJoint(int JointID) {
         return isTracking()
                 && getJointTrackingState(JointID) == POSITION_TRACKED;
+    }
+
+    public Position getJointPosition(int JointID) {
+        Position p = new Position();
+        p.x = getJointPositionByIndex(ID, JointID, 0);
+        p.y = getJointPositionByIndex(ID, JointID, 1);
+        p.z = getJointPositionByIndex(ID, JointID, 2);
+        return p;
     }
 
     public static Position getNormalToGravity_NOT_WORKING() {
