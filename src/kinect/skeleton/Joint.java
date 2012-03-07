@@ -18,17 +18,9 @@ public class Joint {
     private Skeleton skeleton;
     private int JointID;
 
-    public Joint(int skeletonID, int jointID) {
-        skeleton = new Skeleton(skeletonID);
-        setJointID(jointID);
-    }
-
-    public void setSkeletonID(int SkeletonID) {
-        skeleton.ID = SkeletonID;
-    }
-
-    public void setJointID(int jointID) {
-        JointID = jointID;
+    public Joint(Skeleton skeleton, int jointID) {
+        this.skeleton = skeleton;
+        this.JointID = jointID;
     }
 
     public Position getPosition() {
@@ -43,7 +35,7 @@ public class Joint {
         return floor.getDistanceFromPlane(getPosition());
     }
 
-    public int getSkeletonId() {
-        return skeleton.ID;
+    public Skeleton getSkeleton() {
+        return skeleton;
     }
 }

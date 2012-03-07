@@ -4,37 +4,37 @@ import kinect.geometry.Position;
 
 public class Skeleton {
 
-    public static final int SKELETON_COUNT = 6;
+    static final int SKELETON_COUNT = 6;
     // TRACKING_STATE
-    public static final int SKELETON_NOT_TRACKED = 0;
-    public static final int SKELETON_POSITION_ONLY = 1;
-    public static final int SKELETON_TRACKED = 2;
+    static final int SKELETON_NOT_TRACKED = 0;
+    static final int SKELETON_POSITION_ONLY = 1;
+    static final int SKELETON_TRACKED = 2;
     // POSITION_TRACKING_STATE
-    public static final int POSITION_NOT_TRACKED = 0;
-    public static final int POSITION_INFERRED = 1;
-    public static final int POSITION_TRACKED = 2;
+    static final int POSITION_NOT_TRACKED = 0;
+    static final int POSITION_INFERRED = 1;
+    static final int POSITION_TRACKED = 2;
     // POSITION_INDEX
-    public static final int POSITION_HIP_CENTER = 0;
-    public static final int POSITION_SPINE = 1;
-    public static final int POSITION_SHOULDER_CENTER = 2;
-    public static final int POSITION_HEAD = 3;
-    public static final int POSITION_SHOULDER_LEFT = 4;
-    public static final int POSITION_ELBOW_LEFT = 5;
-    public static final int POSITION_WRIST_LEFT = 6;
-    public static final int POSITION_HAND_LEFT = 7;
-    public static final int POSITION_SHOULDER_RIGHT = 8;
-    public static final int POSITION_ELBOW_RIGHT = 9;
-    public static final int POSITION_WRIST_RIGHT = 10;
-    public static final int POSITION_HAND_RIGHT = 11;
-    public static final int POSITION_HIP_LEFT = 12;
-    public static final int POSITION_KNEE_LEFT = 13;
-    public static final int POSITION_ANKLE_LEFT = 14;
-    public static final int POSITION_FOOT_LEFT = 15;
-    public static final int POSITION_HIP_RIGHT = 16;
-    public static final int POSITION_KNEE_RIGHT = 17;
-    public static final int POSITION_ANKLE_RIGHT = 18;
-    public static final int POSITION_FOOT_RIGHT = 19;
-    public static final int POSITION_COUNT = 20;
+    static final int POSITION_HIP_CENTER = 0;
+    static final int POSITION_SPINE = 1;
+    static final int POSITION_SHOULDER_CENTER = 2;
+    static final int POSITION_HEAD = 3;
+    static final int POSITION_SHOULDER_LEFT = 4;
+    static final int POSITION_ELBOW_LEFT = 5;
+    static final int POSITION_WRIST_LEFT = 6;
+    static final int POSITION_HAND_LEFT = 7;
+    static final int POSITION_SHOULDER_RIGHT = 8;
+    static final int POSITION_ELBOW_RIGHT = 9;
+    static final int POSITION_WRIST_RIGHT = 10;
+    static final int POSITION_HAND_RIGHT = 11;
+    static final int POSITION_HIP_LEFT = 12;
+    static final int POSITION_KNEE_LEFT = 13;
+    static final int POSITION_ANKLE_LEFT = 14;
+    static final int POSITION_FOOT_LEFT = 15;
+    static final int POSITION_HIP_RIGHT = 16;
+    static final int POSITION_KNEE_RIGHT = 17;
+    static final int POSITION_ANKLE_RIGHT = 18;
+    static final int POSITION_FOOT_RIGHT = 19;
+    static final int POSITION_COUNT = 20;
 
     public Joint FOOT_LEFT;
     public Joint FOOT_RIGHT;
@@ -57,6 +57,17 @@ public class Skeleton {
     public Joint SPINE;
     public Joint HEAD;
 
+    ////////////////////////////////////////////////////////////////////
+    // ENOUGH STATIC STORAGE FOR 7 SKELETONS
+    ////////////////////////////////////////////////////////////////////
+    static Skeleton[] skeletons = null;
+    static{
+        skeletons = new Skeleton[7];
+        for (int i = 0; i < skeletons.length; i++) {
+            skeletons[i] = new Skeleton(i);
+        }
+    }
+    
 //    typedef struct _FRAME
 //    {
 //        LARGE_INTEGER         liTimeStamp;            8
@@ -97,28 +108,33 @@ public class Skeleton {
     //////////////////////////////////////////////////////////////////////////////////////
     public int ID;
 
-    public Skeleton(int skeletonID) {
+    public static Skeleton getSkeleton(int SkeletonID){
+        return skeletons[SkeletonID];
+    }
+    
+    
+    private Skeleton(int skeletonID) {
         ID = skeletonID;
-        FOOT_LEFT = new Joint(ID,Skeleton.POSITION_FOOT_LEFT);
-        FOOT_RIGHT = new Joint(ID,Skeleton.POSITION_FOOT_RIGHT);
-        ANKLE_LEFT = new Joint(ID,Skeleton.POSITION_ANKLE_LEFT);
-        ANKLE_RIGHT = new Joint(ID,Skeleton.POSITION_ANKLE_RIGHT);
-        KNEE_LEFT = new Joint(ID,Skeleton.POSITION_KNEE_LEFT);
-        KNEE_RIGHT = new Joint(ID,Skeleton.POSITION_KNEE_RIGHT);
-        HIP_LEFT = new Joint(ID,Skeleton.POSITION_HIP_LEFT);
-        HIP_RIGHT = new Joint(ID,Skeleton.POSITION_HIP_RIGHT);
-        HIP_CENTRE = new Joint(ID,Skeleton.POSITION_HIP_CENTER);
-        HAND_LEFT = new Joint(ID,Skeleton.POSITION_HAND_LEFT);
-        HAND_RIGHT = new Joint(ID,Skeleton.POSITION_HAND_RIGHT);
-        WRIST_LEFT = new Joint(ID,Skeleton.POSITION_WRIST_LEFT);
-        WRIST_RIGHT = new Joint(ID,Skeleton.POSITION_WRIST_RIGHT);
-        ELBOW_LEFT = new Joint(ID,Skeleton.POSITION_ELBOW_LEFT);
-        ELBOW_RIGHT = new Joint(ID,Skeleton.POSITION_ELBOW_RIGHT);
-        SHOULDER_LEFT = new Joint(ID,Skeleton.POSITION_SHOULDER_LEFT);
-        SHOULDER_RIGHT = new Joint(ID,Skeleton.POSITION_SHOULDER_RIGHT);
-        SHOULDER_CENTRE = new Joint(ID,Skeleton.POSITION_SHOULDER_CENTER);
-        SPINE = new Joint(ID,Skeleton.POSITION_SPINE);
-        HEAD = new Joint(ID,Skeleton.POSITION_HEAD);
+        FOOT_LEFT = new Joint(this,Skeleton.POSITION_FOOT_LEFT);
+        FOOT_RIGHT = new Joint(this,Skeleton.POSITION_FOOT_RIGHT);
+        ANKLE_LEFT = new Joint(this,Skeleton.POSITION_ANKLE_LEFT);
+        ANKLE_RIGHT = new Joint(this,Skeleton.POSITION_ANKLE_RIGHT);
+        KNEE_LEFT = new Joint(this,Skeleton.POSITION_KNEE_LEFT);
+        KNEE_RIGHT = new Joint(this,Skeleton.POSITION_KNEE_RIGHT);
+        HIP_LEFT = new Joint(this,Skeleton.POSITION_HIP_LEFT);
+        HIP_RIGHT = new Joint(this,Skeleton.POSITION_HIP_RIGHT);
+        HIP_CENTRE = new Joint(this,Skeleton.POSITION_HIP_CENTER);
+        HAND_LEFT = new Joint(this,Skeleton.POSITION_HAND_LEFT);
+        HAND_RIGHT = new Joint(this,Skeleton.POSITION_HAND_RIGHT);
+        WRIST_LEFT = new Joint(this,Skeleton.POSITION_WRIST_LEFT);
+        WRIST_RIGHT = new Joint(this,Skeleton.POSITION_WRIST_RIGHT);
+        ELBOW_LEFT = new Joint(this,Skeleton.POSITION_ELBOW_LEFT);
+        ELBOW_RIGHT = new Joint(this,Skeleton.POSITION_ELBOW_RIGHT);
+        SHOULDER_LEFT = new Joint(this,Skeleton.POSITION_SHOULDER_LEFT);
+        SHOULDER_RIGHT = new Joint(this,Skeleton.POSITION_SHOULDER_RIGHT);
+        SHOULDER_CENTRE = new Joint(this,Skeleton.POSITION_SHOULDER_CENTER);
+        SPINE = new Joint(this,Skeleton.POSITION_SPINE);
+        HEAD = new Joint(this,Skeleton.POSITION_HEAD);
     }
 
     public int getTrackingState() {
