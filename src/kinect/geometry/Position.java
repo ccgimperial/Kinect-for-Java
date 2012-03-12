@@ -4,7 +4,7 @@ import java.text.DecimalFormat;
 
 public class Position {
 
-    protected static DecimalFormat formatter = new DecimalFormat("0.000");
+    protected static DecimalFormat formatter = new DecimalFormat(" 0.000;-0.000");
 
     public double x = 0;
     public double y = 0;

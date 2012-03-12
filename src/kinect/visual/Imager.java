@@ -13,6 +13,7 @@ import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by IntelliJ IDEA.
@@ -241,4 +242,44 @@ public class Imager {
     }
 
 
+    public static void updateColour640ImageWithPlayerCutout(BufferedImage target, int pid) {
+        ByteBuffer bb = Kinect.VIDEO_BUFFER;
+
+        Arrays.fill(img_data_rgb,0); // clear the storage array
+
+        // go through depth image to cut out player
+        Pixel pd = new Pixel();
+        for (pd.row = 0; pd.row < 240; pd.row++) {
+            for (pd.col = 0; pd.col < 320; pd.col++) {
+
+                int d = Depth.getDepth(pd);
+                int playerId = Depth.getPlayerId(pd);
+
+                if(playerId == pid){
+                    Pixel vp = Projection.depthPixelToVideoPixel(pd); // this and surrounding pixels should be active
+                    int index = (640 * vp.row + vp.col) * 4;
+                    img_data_rgb[index] = bb.get(index + 2);
+                    img_data_rgb[index + 1] = bb.get(index + 1);
+                    img_data_rgb[index + 2] = bb.get(index);
+                    img_data_rgb[index + 3] = 255;
+                    img_data_rgb[index + 4] = bb.get(index + 6);
+                    img_data_rgb[index + 5] = bb.get(index + 5);
+                    img_data_rgb[index + 6] = bb.get(index + 4);
+                    img_data_rgb[index + 7] = 255;
+                    index += (640 -2) * 4;
+                    img_data_rgb[index] = bb.get(index + 2);
+                    img_data_rgb[index + 1] = bb.get(index + 1);
+                    img_data_rgb[index + 2] = bb.get(index);
+                    img_data_rgb[index + 3] = 255;
+                    img_data_rgb[index + 4] = bb.get(index + 6);
+                    img_data_rgb[index + 5] = bb.get(index + 5);
+                    img_data_rgb[index + 6] = bb.get(index + 4);
+                    img_data_rgb[index + 7] = 255;
+                }
+            }
+    }
+
+    target.getRaster().setPixels(0,0,640,480,img_data_rgb);
+
+}
 }

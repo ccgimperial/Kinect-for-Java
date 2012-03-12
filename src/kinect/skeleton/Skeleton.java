@@ -115,7 +115,7 @@ public class Skeleton {
     }
     
     
-    private Skeleton(int skeletonID) {
+    protected Skeleton(int skeletonID) {
         ID = skeletonID;
         joints = new Joint[POSITION_COUNT];
         for (int i = 0; i < joints.length; i++) {
@@ -130,7 +130,6 @@ public class Skeleton {
     public boolean isTracking() {
         return getSkeletonTrackingState(ID) == SKELETON_TRACKED;
     }
-
 
     public static Position getNormalToGravity_NOT_WORKING() {
         Position p = new Position();
@@ -167,4 +166,7 @@ public class Skeleton {
 
     }
 
+    public static Skeleton getTrackedSkeleton() {
+        return getSkeleton(getTrackedSkeletonId());
+    }
 }

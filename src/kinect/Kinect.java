@@ -1,8 +1,6 @@
 package kinect;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 
@@ -50,12 +48,15 @@ public final class Kinect {
             int event_id = Kinect.getNextEvent();
             switch (event_id) {
                 case 1:
+                    // VIDEO_BUFFER has now been filled
                     observer.VideoEvent();
                     break;
                 case 2:
+                    // DEPTH_BUFFER has now been filled
                     observer.DepthEvent();
                     break;
                 case 3:
+                    // Skeleton data has been updated
                     observer.SkeletonEvent();
                     break;
                 case 0:
@@ -89,6 +90,17 @@ public final class Kinect {
         fc.close();
     }
 
+    public static void readDepthFromFile(File file) throws IOException {
+        FileChannel fc = new FileInputStream(file).getChannel();
+        fc.read(Kinect.DEPTH_BUFFER);
+        fc.close();
+    }
+
+    public static void readVideoFromFile(File file) throws IOException {
+        FileChannel fc = new FileInputStream(file).getChannel();
+        fc.read(Kinect.VIDEO_BUFFER);
+        fc.close();
+    }
 
     ///////////////////////////////////////////////////////////////////////////////
     // PUBLIC NATIVE INTERFACE

@@ -1,5 +1,6 @@
 package kinect.world;
 
+import com.sun.xml.internal.bind.v2.TODO;
 import kinect.geometry.Pixel;
 import kinect.geometry.Position;
 import kinect.geometry.SquareMatrix;
@@ -208,4 +209,28 @@ public class Projection {
         Position vwp = depthWorldToVideoWorld(dwp);
         return videoWorldToVideoPixel(vwp);
     }
+
+    /** Introduced this to account for the fact that skeleton
+     * points are set inside the body.  Matching of depth pixels
+     * to video pixels works OK.  Therefore, we first rebase 
+     * the skeleton point to the depth pixel and take it from there.
+     * If this approach results in a depth pixel with zero depth
+     * it will return a zero result.  Change your input position.
+     *
+     * @param swp world point from skeleton
+     * @return corresponding video point
+     */
+    public static Pixel skeletonWorldToVideoPixel(Position swp) {
+        Pixel dp = depthWorldToDepthPixel(swp);
+        return depthPixelToVideoPixel(dp);
+
+    }
+
+    public static Pixel depthPixelToVideoPixel(Pixel dp) {
+        int d = Depth.getDepth(dp);
+        Position dwp = depthPixelToDepthWorld(dp, d);
+        Position vwp = depthWorldToVideoWorld(dwp);
+        return videoWorldToVideoPixel(vwp);
+    }
+
 }
