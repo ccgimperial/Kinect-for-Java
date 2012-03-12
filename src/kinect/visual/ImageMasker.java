@@ -27,7 +27,7 @@ public class ImageMasker {
      * @param rounded - stroke has rounded ends or not
      * @return new image with only stroked part
      */
-    static BufferedImage createImageMaskStroke(BufferedImage img, int width, Pixel start, Pixel end, boolean rounded) {
+    public static BufferedImage createImageMaskStroke(BufferedImage img, int width, Pixel start, Pixel end, boolean rounded) {
 
         BufferedImage mask = Imager.getNewVideoImage();
 
