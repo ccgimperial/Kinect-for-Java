@@ -1,5 +1,7 @@
 package kinect.geometry;
 
+import java.text.DecimalFormat;
+
 /**
  * Created by IntelliJ IDEA.
  * User: John
@@ -9,6 +11,8 @@ package kinect.geometry;
  * Simple utility vector class
  */
 public class Vector {
+
+    protected static DecimalFormat formatter = new DecimalFormat(" 0.000;-0.000");
 
     public double x = 0;
     public double y = 0;
@@ -84,4 +88,13 @@ public class Vector {
     public Vector normalise() {
         return this.divide(this.getLength());
     }
+
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName() + "{"
+                + formatter.format(x) + ","
+                + formatter.format(y) + ","
+                + formatter.format(z) + '}';
+    }
+
 }
