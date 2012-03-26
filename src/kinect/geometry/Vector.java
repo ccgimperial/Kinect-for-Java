@@ -8,7 +8,11 @@ package kinect.geometry;
  * <p/>
  * Simple utility vector class
  */
-public class Vector extends Position {
+public class Vector {
+
+    public double x = 0;
+    public double y = 0;
+    public double z = 0;
 
     Double length = null;
 
@@ -19,6 +23,12 @@ public class Vector extends Position {
         x = to.x - from.x;
         y = to.y - from.y;
         z = to.z - from.z;
+    }
+
+    public Vector(double x, double y, double z) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
     }
 
     public double getLength() {
@@ -55,5 +65,23 @@ public class Vector extends Position {
         return (Vector) other.multiply(1 / dot(other));
     }
 
+    public Vector multiply(double multiplicand) {
+        Vector r = new Vector();
+        r.x = this.x * multiplicand;
+        r.y = this.y * multiplicand;
+        r.z = this.z * multiplicand;
+        return r;
+    }
 
+    public Vector divide(double divisor) {
+        Vector r = new Vector();
+        r.x = this.x / divisor;
+        r.y = this.y / divisor;
+        r.z = this.z / divisor;
+        return r;
+    }
+
+    public Vector normalise() {
+        return this.divide(this.getLength());
+    }
 }

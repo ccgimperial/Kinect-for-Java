@@ -10,6 +10,20 @@ public class Position {
     public double y = 0;
     public double z = 0;
 
+    public Position() {}
+
+    public Position(double x, double y, double z) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+    }
+
+    public Position(Position other){
+        this.x = other.x;
+        this.y = other.y;
+        this.z = other.z;
+    }
+
     public Position add(Position other) {
         Position r = new Position();
         r.x = this.x + other.x;
@@ -49,5 +63,14 @@ public class Position {
                 + formatter.format(y) + ","
                 + formatter.format(z) + '}';
     }
+
+    public Position translateBy(Vector translator) {
+        Position r = new Position();
+        r.x = this.x + translator.x;
+        r.y = this.y + translator.y;
+        r.z = this.z + translator.z;
+        return r;
+    }
+
 
 }

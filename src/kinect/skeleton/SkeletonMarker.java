@@ -70,7 +70,7 @@ public class SkeletonMarker {
         g.dispose();
     }
 
-    private static void markSkeletonPositionOnDepth(Position pos, BufferedImage img, Color c) {
+    public static void markSkeletonPositionOnDepth(Position pos, BufferedImage img, Color c) {
         Pixel dp = Projection.depthWorldToDepthPixel(pos);
         Graphics2D g = img.createGraphics();
         g.setColor(c);

@@ -14,6 +14,18 @@ public class Pixel {
     public int row = 0;
     public int col = 0;
 
+    public Pixel() {}
+
+    public Pixel(int row, int col) {
+        this.row = row;
+        this.col = col;
+    }
+
+    public Pixel(Pixel other) {
+        this.row = other.row;
+        this.col = other.col;
+    }
+
     public boolean isInBounds320() {
         if (row < 0) return false;
         if (row >= 240) return false;

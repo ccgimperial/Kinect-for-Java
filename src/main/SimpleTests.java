@@ -15,9 +15,7 @@ public class SimpleTests {
     public static void main(String[] args) {
         System.out.println("hi");
 
-        Pixel pos_d = new Pixel();
-        pos_d.col = 160;
-        pos_d.row = 120;
+        Pixel pos_d = new Pixel(120,160);
         System.out.println(pos_d);
         Position p = Projection.depthPixelToDepthWorld(pos_d, 1);
         System.out.println(p);

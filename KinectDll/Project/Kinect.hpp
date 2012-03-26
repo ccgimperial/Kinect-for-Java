@@ -66,7 +66,7 @@ namespace Kinect {
 
 
 
-		printf("Kinect::Init() -- events created\n");
+		//printf("Kinect::Init() -- events created\n");
 
 		// initialisation
 		HRESULT hr = NuiInitialize(NUI_INITIALIZE_FLAG_USES_DEPTH_AND_PLAYER_INDEX | NUI_INITIALIZE_FLAG_USES_SKELETON | NUI_INITIALIZE_FLAG_USES_COLOR);
@@ -74,11 +74,11 @@ namespace Kinect {
 			MessageBox(NULL,L"Kinect initialisation failed.",L"Kinect Error",NULL);
 			return hr;
 		}
-		printf("Kinect::Init() -- done NuiInitialize\n");
+		//printf("Kinect::Init() -- done NuiInitialize\n");
 
 		hr = NuiSkeletonTrackingEnable( m_hNextSkeletonEvent, 0 );
 		if(FAILED(hr)) return hr;
-		printf("Kinect::Init() -- done NuiSkeletonTrackingEnable\n");
+		//printf("Kinect::Init() -- done NuiSkeletonTrackingEnable\n");
 
 		hr = NuiImageStreamOpen(
 			NUI_IMAGE_TYPE_COLOR,
@@ -88,7 +88,7 @@ namespace Kinect {
 			m_hNextVideoFrameEvent,
 			&m_pVideoStreamHandle );
 		if(FAILED(hr)) return hr;
-		printf("Kinect::Init() -- done NuiImageStreamOpen for video\n");
+		//printf("Kinect::Init() -- done NuiImageStreamOpen for video\n");
 
 		hr = NuiImageStreamOpen(
 			NUI_IMAGE_TYPE_DEPTH_AND_PLAYER_INDEX,
@@ -98,7 +98,7 @@ namespace Kinect {
 			m_hNextDepthFrameEvent,
 			&m_pDepthStreamHandle );
 		if(FAILED(hr)) return hr;
-		printf("Kinect::Init() -- done NuiImageStreamOpen for depth\n");
+		//printf("Kinect::Init() -- done NuiImageStreamOpen for depth\n");
 
 		return hr;
 
