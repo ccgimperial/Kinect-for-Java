@@ -23,7 +23,7 @@ public class MedianPositionFilter implements PositionFilter {
     }
 
     public Position get(){
-        return new Position((int) x_filter.get(),(int) y_filter.get(), (int)z_filter.get());
+        return new Position(x_filter.get(),y_filter.get(),z_filter.get());
     }
 
     public void put(Position sample) {
