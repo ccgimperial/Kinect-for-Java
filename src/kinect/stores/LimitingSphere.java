@@ -59,7 +59,7 @@ public class LimitingSphere {
         }
 
         // return the result based upon that sub-set
-        return PositionRecorder.simpleAverage(pr_subset, sub_count);
+        return pr.simpleAverage(sub_count);
 
     }
 
