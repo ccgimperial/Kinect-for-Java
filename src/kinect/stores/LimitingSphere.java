@@ -19,10 +19,15 @@ public class LimitingSphere {
     public Position average;
     public double radius;
 
-    LimitingSphere() {
+    LimitingSphere(){}
 
+    @Override
+    public String toString() {
+        return "LimitingSphere{" +
+                "average=" + average +
+                ", radius=" + radius +
+                '}';
     }
-
 
     /**
      * This provides the limiting sphere for the previous <i>countback</i>

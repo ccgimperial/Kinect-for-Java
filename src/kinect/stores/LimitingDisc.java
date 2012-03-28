@@ -15,4 +15,12 @@ public class LimitingDisc {
     public double radius;
 
     LimitingDisc(){}
+
+    @Override
+    public String toString() {
+        return "LimitingDisc{" +
+                "average=" + average +
+                ", radius=" + radius +
+                '}';
+    }
 }
