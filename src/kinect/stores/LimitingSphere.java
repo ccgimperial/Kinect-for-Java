@@ -1,8 +1,7 @@
-package kinect.motion;
+package kinect.stores;
 
 import kinect.geometry.Position;
 import kinect.geometry.Vector;
-import kinect.stores.PositionRecorder;
 
 import java.util.ArrayList;
 
@@ -15,33 +14,12 @@ import java.util.ArrayList;
  * Class to identify the size and average center of
  * the last n positions from a position recorder
  */
-public class SphereLimit {
+public class LimitingSphere {
 
     public Position average;
     public double radius;
 
-    private SphereLimit() {
-
-    }
-
-    /**
-     * provides the limiting sphere for the last countback
-     * positions recorded in pr.
-     *
-     * @param pr        - position recorder to use
-     * @param countback - number of positions to consider
-     * @return limiting sphere as SphereLimit object
-     */
-    public static SphereLimit simpleAverage(PositionRecorder pr, int countback) {
-
-        SphereLimit sl = new SphereLimit();
-        sl.average = pr.getMovingAverage(countback);
-        ArrayList<Position> ps = pr.getPreviousNPositions(countback);
-        for (Position p : ps) {
-            Vector displacement = new Vector(sl.average, p);
-            sl.radius = Math.max(sl.radius, displacement.getLength());
-        }
-        return sl;
+    LimitingSphere() {
 
     }
 
@@ -56,9 +34,9 @@ public class SphereLimit {
      * @param pr        PositionRecorder for the points
      * @param countback number of positions to consider
      * @param sds       number of standard deviations to include, exclude points outside these limits
-     * @return SphereLimit with average and radius of sds standard deviation equivalents
+     * @return LimitingSphere with average and radius of sds standard deviation equivalents
      */
-    public static SphereLimit averageWithinStandardDeviations___BUGGY____(PositionRecorder pr, int countback, float sds) {
+    public static LimitingSphere averageWithinStandardDeviations___BUGGY____(PositionRecorder pr, int countback, float sds) {
 
         Position ave = pr.getMovingAverage(countback);
         ArrayList<Position> ps = pr.getPreviousNPositions(countback);
@@ -81,7 +59,7 @@ public class SphereLimit {
         }
 
         // return the result based upon that sub-set
-        return simpleAverage(pr_subset, sub_count);
+        return PositionRecorder.simpleAverage(pr_subset, sub_count);
 
     }
 

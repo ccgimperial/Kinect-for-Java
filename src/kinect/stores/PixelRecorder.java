@@ -2,6 +2,7 @@ package kinect.stores;
 
 import kinect.geometry.Pixel;
 import kinect.geometry.Position;
+import kinect.geometry.Vector;
 
 import java.util.ArrayList;
 
@@ -56,5 +57,22 @@ public class PixelRecorder {
         return ps.size();
     }
 
+    /**
+     * provides the limiting sphere for the last countback positions recorded in pr.
+     *
+     * @param countback - number of positions to consider
+     * @return limiting sphere as LimitingSphere object
+     */
+    public LimitingDisc simpleAverage(int countback) {
 
+        LimitingDisc sl = new LimitingDisc();
+        sl.average = getMovingAverage(countback);
+        ArrayList<Pixel> ps = getPreviousNPixels(countback);
+        for (Pixel p : ps) {
+            double displacement = p.distanceTo(sl.average);
+            sl.radius = Math.max(sl.radius, displacement);
+        }
+        return sl;
+
+    }
 }

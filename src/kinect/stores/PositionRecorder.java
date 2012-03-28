@@ -1,6 +1,7 @@
 package kinect.stores;
 
 import kinect.geometry.Position;
+import kinect.geometry.Vector;
 
 import java.util.ArrayList;
 
@@ -18,6 +19,25 @@ public class PositionRecorder {
     private ArrayList<Position> ps = new ArrayList<Position>();
     private Position overall_sum = new Position();
     private Position overall_average = new Position();
+
+    /**
+     * provides the limiting sphere for the last countback positions recorded in pr.
+     *
+     * @param countback - number of positions to consider
+     * @return limiting sphere as LimitingSphere object
+     */
+    public LimitingSphere simpleAverage(int countback) {
+
+        LimitingSphere sl = new LimitingSphere();
+        sl.average = getMovingAverage(countback);
+        ArrayList<Position> ps = getPreviousNPositions(countback);
+        for (Position p : ps) {
+            Vector displacement = new Vector(sl.average, p);
+            sl.radius = Math.max(sl.radius, displacement.getLength());
+        }
+        return sl;
+
+    }
 
     public void addPosition(Position p) {
         ps.add(p);

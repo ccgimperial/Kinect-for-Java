@@ -60,4 +60,8 @@ public class Pixel {
         p.col = (int) Math.round(this.col / d);
         return p;
     }
+
+    public double distanceTo(Pixel other) {
+        return Math.sqrt(Math.pow(this.row - other.row,2) + Math.pow(this.col - other.col,2));
+    }
 }
