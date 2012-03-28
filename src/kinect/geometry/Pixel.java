@@ -47,4 +47,17 @@ public class Pixel {
         return this.getClass().getSimpleName() + "{" + row + "," + col + '}';
     }
 
+    public Pixel add(Pixel other) {
+        Pixel p = new Pixel();
+        p.row = this.row + other.row;
+        p.col = this.col + other.col;
+        return p;
+    }
+
+    public Pixel divide(double d) {
+        Pixel p = new Pixel();
+        p.row = (int) Math.round(this.row / d);
+        p.col = (int) Math.round(this.col / d);
+        return p;
+    }
 }
