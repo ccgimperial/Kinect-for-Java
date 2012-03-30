@@ -97,4 +97,13 @@ public class Vector {
                 + formatter.format(z) + '}';
     }
 
+    /**
+     * component of displacement in a particular direction
+     * @param direction
+     * @return
+     */
+    public double displacementInGivenDirection(Vector direction) {
+        double proportion = this.dot(direction);
+        return proportion / direction.getLength();
+    }
 }

@@ -64,7 +64,7 @@ public class LimitingSphere {
         }
 
         // return the result based upon that sub-set
-        return pr.simpleAverage(sub_count);
+        return pr.getLimitingSphere(sub_count);
 
     }
 

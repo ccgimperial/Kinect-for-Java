@@ -26,7 +26,7 @@ public class PositionRecorder {
      * @param countback - number of positions to consider
      * @return limiting sphere as LimitingSphere object
      */
-    public LimitingSphere simpleAverage(int countback) {
+    public LimitingSphere getLimitingSphere(int countback) {
 
         LimitingSphere sl = new LimitingSphere();
         sl.average = getMovingAverage(countback);
