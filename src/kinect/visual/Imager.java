@@ -5,14 +5,13 @@ import kinect.geometry.Pixel;
 import kinect.geometry.Position;
 import kinect.skeleton.Joint;
 import kinect.skeleton.Skeleton;
-import kinect.world.Depth;
+import kinect.world.depth.Depth;
 import kinect.world.Projection;
 
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
 import java.util.Arrays;
 
 /**

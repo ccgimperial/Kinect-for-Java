@@ -1,4 +1,4 @@
-package kinect.world;
+package kinect.world.depth;
 
 import kinect.Kinect;
 import kinect.geometry.Pixel;

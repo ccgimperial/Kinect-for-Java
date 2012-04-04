@@ -1,11 +1,10 @@
 package kinect.world;
 
-import com.sun.xml.internal.bind.v2.TODO;
 import kinect.geometry.Pixel;
 import kinect.geometry.Position;
 import kinect.geometry.SquareMatrix;
-import kinect.skeleton.Joint;
 import kinect.visual.Imager;
+import kinect.world.depth.Depth;
 
 /**
  * Created by IntelliJ IDEA.
