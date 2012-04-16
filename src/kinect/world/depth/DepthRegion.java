@@ -80,6 +80,7 @@ public class DepthRegion {
     // File Handling
     public void saveToFile(String filename) {DepthRegionFileHandler.saveToFile(this,filename);}
     public void loadFromFile(String filename){DepthRegionFileHandler.loadFromFile(this, filename);}
+    public void loadFromFileOld(String filename){DepthRegionFileHandler.loadFromFileOld(this, filename);}
 
     // lock and unlock
     public void lock(){DEPTH_BUFFER = Kinect.DEPTH_BUFFER.duplicate();}
