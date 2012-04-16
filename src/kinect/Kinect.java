@@ -80,24 +80,28 @@ public final class Kinect {
 
     public static void writeDepthToFile(File file) throws IOException {
         FileChannel fc = new FileOutputStream(file, false).getChannel();
+        Kinect.DEPTH_BUFFER.rewind();
         fc.write(Kinect.DEPTH_BUFFER);
         fc.close();
     }
 
     public static void writeVideoToFile(File file) throws IOException {
         FileChannel fc = new FileOutputStream(file, false).getChannel();
+        Kinect.VIDEO_BUFFER.rewind();
         fc.write(Kinect.VIDEO_BUFFER);
         fc.close();
     }
 
     public static void readDepthFromFile(File file) throws IOException {
         FileChannel fc = new FileInputStream(file).getChannel();
+        Kinect.DEPTH_BUFFER.rewind();
         fc.read(Kinect.DEPTH_BUFFER);
         fc.close();
     }
 
     public static void readVideoFromFile(File file) throws IOException {
         FileChannel fc = new FileInputStream(file).getChannel();
+        Kinect.VIDEO_BUFFER.rewind();
         fc.read(Kinect.VIDEO_BUFFER);
         fc.close();
     }
