@@ -90,4 +90,12 @@ public class DepthRegion {
     public BufferedImage toBufferedImage(){return DepthRegionImager.toBufferedImage(this);}
 
 
+    public Pixel getNearestPoint() {
+        return DepthRegionAnalyser.getNearestPoint(this);
+    }
+
+    public int getAverageDepthUsingBooleanMask(BooleanRegion br) {
+        return DepthRegionAnalyser.getAverageDepthUsingBooleanMask(this, br);
+    }
+
 }

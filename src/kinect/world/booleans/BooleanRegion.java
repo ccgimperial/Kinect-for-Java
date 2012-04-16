@@ -17,8 +17,8 @@ import java.util.Arrays;
  */
 public class BooleanRegion {
 
-    int width;
-    int height;
+    public int width;
+    public int height;
     boolean[] values;
 
     public BooleanRegion(int width, int height) {
@@ -81,8 +81,9 @@ public class BooleanRegion {
         // TODO checks
         int index = 0;
         for (int i = row; i < row + mask.height; i++) {
-            for (int j = 0; j < col + mask.width; j++) {
-                setValue(i,j,getValue(i,j) && mask.getValueAtIndex(index++));
+            for (int j = col; j < col + mask.width; j++) {
+                setValue(i,j,getValue(i,j) && mask.getValueAtIndex(index));
+                index++;
             }
         }
     }
@@ -114,32 +115,22 @@ public class BooleanRegion {
         return null;
     }
 
-    public Pixel getAverageTrue(Rectangle r) {
-        Pixel average = new Pixel();
-        int trueCount = 0;
-        int index = r.y * width + r.x;
-        for (int sample_region_row = 0; sample_region_row < r.height; sample_region_row++) {
-            for(int sample_region_col = 0; sample_region_col < r.width; sample_region_col++){
-                if(values[index++]){
-                    trueCount++;
-                    average.row += sample_region_row;
-                    average.col += sample_region_col;
-                }
-            }
-            index += (width - r.width);
-        }
-        return average.divide(trueCount);
-    }
 
     public String toStringFormatted(){
         StringBuilder sb = new StringBuilder();
+        for (int j = 0; j < width+2; j++)
+            sb.append("-");
+        sb.append("\n");
         int index = 0;
         for (int i = 0; i < height; i++) {
+            sb.append("|");
             for (int j = 0; j < width; j++) {
                 sb.append((values[index++] ? '*' : ' '));
             }
-            sb.append("\n");
+            sb.append("|\n");
         }
+        for (int j = 0; j < width+2; j++)
+            sb.append("-");
         return sb.toString();
     }
 
@@ -162,5 +153,49 @@ public class BooleanRegion {
         }
         return br;
     }
+
+    public Pixel getAverageTrue(Pixel centre, int search_width, int search_height) {
+
+        // basic search rectangle
+        Rectangle sample_region = new Rectangle(
+                Math.max(centre.col-search_width/2,0),  // x
+                Math.max(centre.row-search_height/2,0), // y
+                search_width,                           // width
+                search_height                           // height
+        );
+
+        // adjust for limits of region
+        sample_region.y = Math.min(sample_region.y, height - search_height);
+        sample_region.x = Math.min(sample_region.x, width - search_width);
+
+        return getAverageTrue(sample_region);
+
+    }
+
+    public Pixel getAverageTrue(Rectangle r) {
+        Pixel average = new Pixel();
+        int trueCount = 0;
+        int index = r.y * width + r.x;
+        for (int sample_region_row = 0; sample_region_row < r.height; sample_region_row++) {
+            for(int sample_region_col = 0; sample_region_col < r.width; sample_region_col++){
+                if(values[index++]){
+                    trueCount++;
+                    average.row += sample_region_row;
+                    average.col += sample_region_col;
+                }
+            }
+            index += (width - r.width);
+        }
+        Pixel ave_in_region = average.divide(trueCount);
+        Pixel avePixel = new Pixel(
+                r.y + ave_in_region.row,
+                r.x + ave_in_region.col
+        );
+        return avePixel;
+
+    }
+
+
+
 
 }

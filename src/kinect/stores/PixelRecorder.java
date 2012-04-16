@@ -75,4 +75,12 @@ public class PixelRecorder {
         return sl;
 
     }
+
+    public double getRadius() {
+        return simpleAverage(getRecordCount()).radius;
+    }
+
+    public LimitingDisc simpleAverage() {
+        return simpleAverage(getRecordCount());
+    }
 }

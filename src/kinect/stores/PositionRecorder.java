@@ -76,4 +76,7 @@ public class PositionRecorder {
     }
 
 
+    public LimitingSphere simpleAverage() {
+        return getLimitingSphere(getRecordCount());
+    }
 }

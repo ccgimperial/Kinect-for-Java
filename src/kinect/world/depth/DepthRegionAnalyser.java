@@ -1,5 +1,6 @@
 package kinect.world.depth;
 
+import kinect.geometry.Pixel;
 import kinect.world.booleans.BooleanRegion;
 
 /**
@@ -17,8 +18,8 @@ public class DepthRegionAnalyser {
         // analyse the hand region
         // create array for the region depth analysis
         int index = 0;
-        for( int row = dr.top; row < dr.top + dr.height; row++ ){
-            for( int col = dr.left; col < dr.left + dr.width; col++ ){
+        for( int row = 0; row < dr.height; row++ ){
+            for( int col = 0; col < dr.width; col++ ){
 
                 int d = dr.getDepth(row, col);
                 int p = dr.getPlayerId(row, col);
@@ -34,13 +35,49 @@ public class DepthRegionAnalyser {
     }
 
     public static int getFirstRowOfPlayer(DepthRegion dr) {
-        for( int row = dr.top; row < dr.top + dr.height; row++ ){
-            for( int col = dr.left; col < dr.left + dr.width; col++ ){
+        for( int row = 0; row < dr.height; row++ ){
+            for( int col = 0; col < dr.width; col++ ){
                 if(dr.getPlayerId(row, col) > 0)
                     return row;
             }
         }
         return -1;
     }
+
+    public static Pixel getNearestPoint(DepthRegion dr) {
+        Pixel p = new Pixel();
+        int min_d = 7000;
+        for( int row = 0; row < dr.height; row++ ){
+            for( int col = 0; col < dr.width; col++ ){
+                int d = dr.getDepth(row, col);
+                if(d > 0 && d < min_d){
+                    min_d = d;
+                    p.row = row;
+                    p.col = col;
+                }
+            }
+        }
+        return p;
+    }
+
+
+    public static int getAverageDepthUsingBooleanMask(DepthRegion dr, BooleanRegion br) {
+        if(dr.width != br.width || dr.height != br.height)
+            return -1;
+        double depth_total = 0;
+        int depth_count = 0;
+        for( int row = 0; row < br.height; row++ ){
+            for( int col = 0; col < br.width; col++ ){
+                if(br.getValue(row,col)){
+                    depth_count++;
+                    depth_total += dr.getDepth(row,col);
+                }
+            }
+        }
+
+        return (int) Math.round(depth_total / depth_count);
+    }
+
+
 
 }
