@@ -24,7 +24,7 @@ public class DepthRegion {
     public int width;
     public int height;
 
-    ByteBuffer DEPTH_BUFFER = Kinect.DEPTH_BUFFER;
+    public ByteBuffer DEPTH_BUFFER = Kinect.DEPTH_BUFFER;
 
     public DepthRegion(int top, int left, int width, int height) {
         this.top = top;
@@ -73,9 +73,7 @@ public class DepthRegion {
     }
 
     /** @return the row id where a player is first seen */
-    public int getFirstRowOfPlayer() {
-        return DepthRegionAnalyser.getFirstRowOfPlayer(this);
-    }
+    public int getFirstRowOfPlayer() {return DepthRegionAnalyser.getFirstRowOfPlayer(this);}
 
     // File Handling
     public void saveToFile(String filename) {DepthRegionFileHandler.saveToFile(this,filename);}

@@ -14,8 +14,8 @@ import java.nio.ByteBuffer;
  * Date: 29/03/12
  * Time: 17:40
  *
- * Allows access to a region of the depth field
- * It is basically an overlay to Kinect.DEPTH_BUFFER so will update each frame
+ * Allows access to a region of the video field
+ * It is basically an overlay to Kinect.VIDEO_BUFFER so will update each frame
  *
  */
 public class VideoRegion {
@@ -44,10 +44,8 @@ public class VideoRegion {
     }
 
     // File Handling
-    public void saveToFile(String filename) {
-        VideoRegionFileHandler.saveToFile(this, filename);}
-    public void loadFromFile(String filename){
-        VideoRegionFileHandler.loadFromFile(this, filename);}
+    public void saveToFile(String filename) {VideoRegionFileHandler.saveToFile(this, filename);}
+    public void loadFromFile(String filename){VideoRegionFileHandler.loadFromFile(this, filename);}
 
     // lock and unlock
     public void lock(){VIDEO_BUFFER = Kinect.VIDEO_BUFFER.duplicate();}

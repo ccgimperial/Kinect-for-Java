@@ -64,4 +64,18 @@ public class Pixel {
     public double distanceTo(Pixel other) {
         return Math.sqrt(Math.pow(this.row - other.row,2) + Math.pow(this.col - other.col,2));
     }
+
+    public Pixel subtract(Pixel other) {
+        Pixel p = new Pixel();
+        p.row = this.row - other.row;
+        p.col = this.col - other.col;
+        return p;
+    }
+
+    public Pixel multiply(double d) {
+        Pixel p = new Pixel();
+        p.row = (int) Math.round(this.row * d);
+        p.col = (int) Math.round(this.col * d);
+        return p;
+    }
 }

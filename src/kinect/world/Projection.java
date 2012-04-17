@@ -30,7 +30,9 @@ public class Projection {
     // do all up-front matrix calculation
     static {
 //        calculateMatrices(320, 248, 160, 120);       // some values for my work Kinect
-        calculateMatrices(314, 256, 160, 120);       // some values for my home Kinect
+//        calculateMatrices(314, 256, 160, 120);       // some values for my home Kinect
+
+        calculateMatrices(326, 248, 157, 122);       // some values for my work Kinect close-in
 
     }
 
