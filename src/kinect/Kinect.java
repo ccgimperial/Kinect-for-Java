@@ -1,5 +1,7 @@
 package kinect;
 
+import kinect.files.FileHandler;
+
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
@@ -78,33 +80,13 @@ public final class Kinect {
 
     public static native void stop();
 
-    public static void writeDepthToFile(File file) throws IOException {
-        FileChannel fc = new FileOutputStream(file, false).getChannel();
-        Kinect.DEPTH_BUFFER.rewind();
-        fc.write(Kinect.DEPTH_BUFFER);
-        fc.close();
-    }
-
-    public static void writeVideoToFile(File file) throws IOException {
-        FileChannel fc = new FileOutputStream(file, false).getChannel();
-        Kinect.VIDEO_BUFFER.rewind();
-        fc.write(Kinect.VIDEO_BUFFER);
-        fc.close();
-    }
-
-    public static void readDepthFromFile(File file) throws IOException {
-        FileChannel fc = new FileInputStream(file).getChannel();
-        Kinect.DEPTH_BUFFER.rewind();
-        fc.read(Kinect.DEPTH_BUFFER);
-        fc.close();
-    }
-
-    public static void readVideoFromFile(File file) throws IOException {
-        FileChannel fc = new FileInputStream(file).getChannel();
-        Kinect.VIDEO_BUFFER.rewind();
-        fc.read(Kinect.VIDEO_BUFFER);
-        fc.close();
-    }
+    ///////////////////////////////////////////////////////////////////////////////////
+    // FILE HANDLING - LOAD AND SAVE DATA - DELEGATED
+    ///////////////////////////////////////////////////////////////////////////////////
+    public static void writeDepthToFile(File file) throws IOException {FileHandler.writeDepthToFile(file);}
+    public static void writeVideoToFile(File file) throws IOException {FileHandler.writeVideoToFile(file);}
+    public static void readDepthFromFile(File file) throws IOException {FileHandler.readDepthFromFile(file);}
+    public static void readVideoFromFile(File file) throws IOException {FileHandler.readVideoFromFile(file);}
 
     ///////////////////////////////////////////////////////////////////////////////
     // PUBLIC NATIVE INTERFACE

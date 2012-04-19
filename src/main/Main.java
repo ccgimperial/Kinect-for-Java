@@ -18,7 +18,7 @@ public class Main implements KinectObserver {
 
     public static void main(String[] args) {
 
-        // create pkg.display frame
+        // create pkg.old_stuff.display frame
         frame = new JFrame();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.getContentPane().setLayout(new BorderLayout());
