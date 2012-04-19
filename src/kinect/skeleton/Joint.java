@@ -22,7 +22,7 @@ public class Joint {
 
 
     private Skeleton skeleton;
-    private int JointID;
+    public int JointID;
 
     public Joint(Skeleton skeleton, int jointID) {
         this.skeleton = skeleton;
@@ -38,8 +38,7 @@ public class Joint {
     }
 
     public boolean isTracking() {
-        return skeleton.isTracking()
-                && getTrackingState() == POSITION_TRACKED;
+        return skeleton.isTracking() && getTrackingState() == POSITION_TRACKED;
     }
 
     public double getHeight(Plane floor) {
