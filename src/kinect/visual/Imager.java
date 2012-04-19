@@ -222,9 +222,6 @@ public class Imager {
     }
 
 
-
-
-
     /////////////////////////////////////////////////////////////////////////////////////////////
     // Allocate BufferedImages of the correct size
     /////////////////////////////////////////////////////////////////////////////////////////////
@@ -281,4 +278,63 @@ public class Imager {
     target.getRaster().setPixels(0,0,640,480,img_data_rgb);
 
 }
+
+    public static void updateColour640ImageWithSkeleton(BufferedImage img, Skeleton s) {
+
+        Graphics2D g = img.createGraphics();
+
+        for (Joint joint : s.getJoints()) {
+
+            Position dwp = joint.getPosition();
+            Pixel dp = Projection.depthWorldToVideoPixel(dwp);
+            Ellipse2D.Double e = new Ellipse2D.Double(dp.col - 5, dp.row - 5, 10, 10);
+
+            switch (joint.getTrackingState()){
+                case Joint.POSITION_TRACKED:
+                    g.setColor(Color.green);
+                    break;
+                case Joint.POSITION_INFERRED:
+                    g.setColor(Color.orange);
+                    break;
+                case Joint.POSITION_NOT_TRACKED:
+                default:
+                    g.setColor(Color.red);
+                    break;
+
+            }
+            g.fill(e);
+        }
+
+        g.dispose();
+
+    }
+
+
+    public static void updateColour640ImageWithVideoOverlaidPlayer(BufferedImage img, int playerId) {
+
+        int index = 0;
+        Pixel pd = new Pixel();
+        for (pd.row = 0; pd.row < 480; pd.row++) {
+            for (pd.col = 0; pd.col < 640; pd.col++) {
+
+                int d = Depth.getDepth(pd);
+                int pid = Depth.getPlayerId(pd);
+
+                int[] c = Projection.depthPixelToVideoColour(pd,d);
+
+                img_data_depth_rgb[index] = c[0];
+                img_data_depth_rgb[index + 1] = c[1];
+                img_data_depth_rgb[index + 2] = c[2];
+                if(pid == playerId)
+                    img_data_depth_rgb[index + 3] = 255;
+                else
+                    img_data_depth_rgb[index + 3] = 0;
+
+                index+=4;
+            }
+        }
+
+        img.getRaster().setPixels(0,0,640,480,img_data_depth_rgb);
+
+    }
 }
