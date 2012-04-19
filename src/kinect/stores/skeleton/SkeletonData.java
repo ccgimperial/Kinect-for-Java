@@ -20,7 +20,7 @@ public class SkeletonData {
     public int TRACKING_STATE;
     private JointData[] joints = new JointData[20];
 
-    protected SkeletonData(Skeleton s) {
+    public SkeletonData(Skeleton s) {
         ID = s.ID;
         TRACKING_STATE = s.getTrackingState();
         for (int i = 0; i < joints.length; i++) {
