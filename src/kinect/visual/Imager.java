@@ -5,8 +5,8 @@ import kinect.geometry.Pixel;
 import kinect.geometry.Position;
 import kinect.skeleton.Joint;
 import kinect.skeleton.Skeleton;
-import kinect.world.depth.Depth;
 import kinect.world.Projection;
+import kinect.world.depth.Depth;
 
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
@@ -19,7 +19,7 @@ import java.util.Arrays;
  * User: John
  * Date: 21/02/12
  * Time: 14:43
- *
+ * <p/>
  * Handle visualisation of Kinect data
  * Probably needs improving, we could do this
  * by perhaps changing the format of the data buffers
@@ -87,7 +87,7 @@ public class Imager {
 
     }
 
-    public static void updateColour320ImageWithDepthAndPlayer(BufferedImage img_depth){
+    public static void updateColour320ImageWithDepthAndPlayer(BufferedImage img_depth) {
 
         int index = 0;
         for (int row = 0; row < 240; row++) {
@@ -100,16 +100,42 @@ public class Imager {
                 int g = 0;
                 int b = 0;
 
-                switch( playerId )
-                {
-                    case 0:r = l / 2; g = l / 2;b = l / 2;break;
-                    case 1:r = l;break;
-                    case 2:g = l;break;
-                    case 3:r = l / 4;g = l;b = l;break;
-                    case 4:r = l;g = l;b = l / 4;break;
-                    case 5:r = l;g = l / 4;b = l;break;
-                    case 6:r = l / 2;g = l / 2;b = l;break;
-                    case 7:r = 255 - ( l / 2 );g = 255 - ( l / 2 );b = 255 - ( l / 2 );
+                switch (playerId) {
+                    case 0:
+                        r = l / 2;
+                        g = l / 2;
+                        b = l / 2;
+                        break;
+                    case 1:
+                        r = l;
+                        break;
+                    case 2:
+                        g = l;
+                        break;
+                    case 3:
+                        r = l / 4;
+                        g = l;
+                        b = l;
+                        break;
+                    case 4:
+                        r = l;
+                        g = l;
+                        b = l / 4;
+                        break;
+                    case 5:
+                        r = l;
+                        g = l / 4;
+                        b = l;
+                        break;
+                    case 6:
+                        r = l / 2;
+                        g = l / 2;
+                        b = l;
+                        break;
+                    case 7:
+                        r = 255 - (l / 2);
+                        g = 255 - (l / 2);
+                        b = 255 - (l / 2);
                 }
 
                 img_data_depth_rgb[index] = r;
@@ -121,11 +147,11 @@ public class Imager {
             }
         }
 
-        img_depth.getRaster().setPixels(0,0,320,240,img_data_depth_rgb);
+        img_depth.getRaster().setPixels(0, 0, 320, 240, img_data_depth_rgb);
 
     }
 
-    public static void updateColour320ImageWithVideoOverlaidDepth(BufferedImage img_depth){
+    public static void updateColour320ImageWithVideoOverlaidDepth(BufferedImage img_depth) {
 
         int index = 0;
         Pixel pd = new Pixel();
@@ -133,21 +159,21 @@ public class Imager {
             for (pd.col = 0; pd.col < 320; pd.col++) {
 
                 int d = Depth.getDepth(pd);
-                int[] c = Projection.depthPixelToVideoColour(pd,d);
+                int[] c = Projection.depthPixelToVideoColour(pd, d);
 
                 img_data_depth_rgb[index] = c[0];
                 img_data_depth_rgb[index + 1] = c[1];
                 img_data_depth_rgb[index + 2] = c[2];
                 img_data_depth_rgb[index + 3] = 255;
-                index+=4;
+                index += 4;
             }
         }
 
-        img_depth.getRaster().setPixels(0,0,320,240,img_data_depth_rgb);
+        img_depth.getRaster().setPixels(0, 0, 320, 240, img_data_depth_rgb);
 
     }
 
-    public static void updateColour320ImageWithVideoOverlaidPlayer(BufferedImage img_depth, int playerId){
+    public static void updateColour320ImageWithVideoOverlaidPlayer(BufferedImage img_depth, int playerId) {
 
         int index = 0;
         Pixel pd = new Pixel();
@@ -157,27 +183,27 @@ public class Imager {
                 int d = Depth.getDepth(pd);
                 int pid = Depth.getPlayerId(pd);
 
-                int[] c = Projection.depthPixelToVideoColour(pd,d);
+                int[] c = Projection.depthPixelToVideoColour(pd, d);
 
                 img_data_depth_rgb[index] = c[0];
                 img_data_depth_rgb[index + 1] = c[1];
                 img_data_depth_rgb[index + 2] = c[2];
-                if(pid == playerId)
+                if (pid == playerId)
                     img_data_depth_rgb[index + 3] = 255;
                 else
                     img_data_depth_rgb[index + 3] = 0;
 
-                index+=4;
+                index += 4;
             }
         }
 
-        img_depth.getRaster().setPixels(0,0,320,240,img_data_depth_rgb);
+        img_depth.getRaster().setPixels(0, 0, 320, 240, img_data_depth_rgb);
 
     }
 
 
-
-    /** returns the colour stored at the requested pixel as an int[]
+    /**
+     * returns the colour stored at the requested pixel as an int[]
      *
      * @param p - Pixel to retrieve
      * @return rgb array of requested Pixel
@@ -191,7 +217,7 @@ public class Imager {
         return colour;
     }
 
-    public static void updateColour320ImageWithSkeleton(BufferedImage img_depth, Skeleton s){
+    public static void updateColour320ImageWithSkeleton(BufferedImage img_depth, Skeleton s) {
 
         Graphics2D g = img_depth.createGraphics();
 
@@ -201,7 +227,7 @@ public class Imager {
             Pixel dp = Projection.depthWorldToDepthPixel(dwp);
             Ellipse2D.Double e = new Ellipse2D.Double(dp.col - 5, dp.row - 5, 10, 10);
 
-            switch (joint.getTrackingState()){
+            switch (joint.getTrackingState()) {
                 case Joint.POSITION_TRACKED:
                     g.setColor(Color.green);
                     break;
@@ -241,7 +267,7 @@ public class Imager {
     public static void updateColour640ImageWithPlayerCutout(BufferedImage target, int pid) {
         ByteBuffer bb = Kinect.VIDEO_BUFFER;
 
-        Arrays.fill(img_data_rgb,0); // clear the storage array
+        Arrays.fill(img_data_rgb, 0); // clear the storage array
 
         // go through depth image to cut out player
         Pixel pd = new Pixel();
@@ -251,7 +277,7 @@ public class Imager {
                 int d = Depth.getDepth(pd);
                 int playerId = Depth.getPlayerId(pd);
 
-                if(playerId == pid){
+                if (playerId == pid) {
                     Pixel vp = Projection.depthPixelToVideoPixel(pd); // this and surrounding pixels should be active
                     int index = (640 * vp.row + vp.col) * 4;
                     img_data_rgb[index] = bb.get(index + 2);
@@ -262,7 +288,7 @@ public class Imager {
                     img_data_rgb[index + 5] = bb.get(index + 5);
                     img_data_rgb[index + 6] = bb.get(index + 4);
                     img_data_rgb[index + 7] = 255;
-                    index += (640 -2) * 4;
+                    index += (640 - 2) * 4;
                     img_data_rgb[index] = bb.get(index + 2);
                     img_data_rgb[index + 1] = bb.get(index + 1);
                     img_data_rgb[index + 2] = bb.get(index);
@@ -273,11 +299,11 @@ public class Imager {
                     img_data_rgb[index + 7] = 255;
                 }
             }
+        }
+
+        target.getRaster().setPixels(0, 0, 640, 480, img_data_rgb);
+
     }
-
-    target.getRaster().setPixels(0,0,640,480,img_data_rgb);
-
-}
 
     public static void updateColour640ImageWithSkeleton(BufferedImage img, Skeleton s) {
 
@@ -285,56 +311,30 @@ public class Imager {
 
         for (Joint joint : s.getJoints()) {
 
-            Position dwp = joint.getPosition();
-            Pixel dp = Projection.depthWorldToVideoPixel(dwp);
-            Ellipse2D.Double e = new Ellipse2D.Double(dp.col - 5, dp.row - 5, 10, 10);
+            Position swp = joint.getPosition();
+            Pixel dp = Projection.skeletonWorldToVideoPixel(swp);
+            if (dp.isInBounds640()) {
+                Ellipse2D.Double e = new Ellipse2D.Double(dp.col - 5, dp.row - 5, 10, 10);
 
-            switch (joint.getTrackingState()){
-                case Joint.POSITION_TRACKED:
-                    g.setColor(Color.green);
-                    break;
-                case Joint.POSITION_INFERRED:
-                    g.setColor(Color.orange);
-                    break;
-                case Joint.POSITION_NOT_TRACKED:
-                default:
-                    g.setColor(Color.red);
-                    break;
+                switch (joint.getTrackingState()) {
+                    case Joint.POSITION_TRACKED:
+                        g.setColor(Color.green);
+                        break;
+                    case Joint.POSITION_INFERRED:
+                        g.setColor(Color.orange);
+                        break;
+                    case Joint.POSITION_NOT_TRACKED:
+                    default:
+                        g.setColor(Color.red);
+                        break;
 
+                }
+                g.fill(e);
             }
-            g.fill(e);
         }
 
         g.dispose();
 
     }
 
-
-    public static void updateColour640ImageWithVideoOverlaidPlayer(BufferedImage img, int playerId) {
-
-        int index = 0;
-        Pixel pd = new Pixel();
-        for (pd.row = 0; pd.row < 480; pd.row++) {
-            for (pd.col = 0; pd.col < 640; pd.col++) {
-
-                int d = Depth.getDepth(pd);
-                int pid = Depth.getPlayerId(pd);
-
-                int[] c = Projection.depthPixelToVideoColour(pd,d);
-
-                img_data_depth_rgb[index] = c[0];
-                img_data_depth_rgb[index + 1] = c[1];
-                img_data_depth_rgb[index + 2] = c[2];
-                if(pid == playerId)
-                    img_data_depth_rgb[index + 3] = 255;
-                else
-                    img_data_depth_rgb[index + 3] = 0;
-
-                index+=4;
-            }
-        }
-
-        img.getRaster().setPixels(0,0,640,480,img_data_depth_rgb);
-
-    }
 }

@@ -1,8 +1,6 @@
 package kinect.stores;
 
 import kinect.geometry.Pixel;
-import kinect.geometry.Position;
-import kinect.geometry.Vector;
 
 import java.util.ArrayList;
 
@@ -20,30 +18,53 @@ public class PixelRecorder {
     private ArrayList<Pixel> ps = new ArrayList<Pixel>();
     private Pixel overall_sum = new Pixel();
     private Pixel overall_average = new Pixel();
+    int capacity;
+
+    public PixelRecorder(int capacity) {
+        this.capacity = capacity;
+    }
 
     public void addPixel(Pixel p) {
         ps.add(p);
-
         overall_sum = overall_sum.add(p);
+        if (ps.size() > capacity) {
+            Pixel removed = ps.remove(0);
+            overall_sum = overall_sum.subtract(removed);
+        }
         overall_average = overall_sum.divide(ps.size());
-
     }
 
-    public Pixel getPreviousPosition(int countback) {
-        if (countback >= ps.size())
-            return null;
-        return ps.get(ps.size() - 1 - countback);
+    public Pixel getAverage() {
+        return overall_average;
     }
 
-    public Pixel getMovingAverage(int countback) {
+    public Pixel getAverageLastN(int countback) {
         Pixel ave = new Pixel();
         for (int i = 0; i < countback && i < ps.size(); i++)
             ave = ave.add(ps.get(ps.size() - 1 - i));
         return ave.divide(countback);
     }
 
-    public Pixel getAverage() {
-        return overall_average;
+    public double getRadius() {
+        return getRadiusLastN(ps.size());
+    }
+
+    public double getRadiusLastN(int countback) {
+        double radius = 0;
+        Pixel ave = getAverageLastN(countback);
+        ArrayList<Pixel> ps = getPreviousNPixels(countback);
+        for (Pixel p : ps) {
+            double displacement = p.distanceTo(ave);
+            radius = Math.max(radius, displacement);
+        }
+        return radius;
+    }
+
+
+    public Pixel getPreviousPosition(int countback) {
+        if (countback >= ps.size())
+            return null;
+        return ps.get(ps.size() - 1 - countback);
     }
 
     public ArrayList<Pixel> getPreviousNPixels(int n) {
@@ -57,30 +78,4 @@ public class PixelRecorder {
         return ps.size();
     }
 
-    /**
-     * provides the limiting sphere for the last countback positions recorded in pr.
-     *
-     * @param countback - number of positions to consider
-     * @return limiting sphere as LimitingSphere object
-     */
-    public LimitingDisc simpleAverage(int countback) {
-
-        LimitingDisc sl = new LimitingDisc();
-        sl.average = getMovingAverage(countback);
-        ArrayList<Pixel> ps = getPreviousNPixels(countback);
-        for (Pixel p : ps) {
-            double displacement = p.distanceTo(sl.average);
-            sl.radius = Math.max(sl.radius, displacement);
-        }
-        return sl;
-
-    }
-
-    public double getRadius() {
-        return simpleAverage(getRecordCount()).radius;
-    }
-
-    public LimitingDisc simpleAverage() {
-        return simpleAverage(getRecordCount());
-    }
 }

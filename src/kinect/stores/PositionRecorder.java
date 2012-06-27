@@ -19,49 +19,53 @@ public class PositionRecorder {
     private ArrayList<Position> ps = new ArrayList<Position>();
     private Position overall_sum = new Position();
     private Position overall_average = new Position();
+    int capacity;
 
-    /**
-     * provides the limiting sphere for the last countback positions recorded in pr.
-     *
-     * @param countback - number of positions to consider
-     * @return limiting sphere as LimitingSphere object
-     */
-    public LimitingSphere getLimitingSphere(int countback) {
-
-        LimitingSphere sl = new LimitingSphere();
-        sl.average = getMovingAverage(countback);
-        ArrayList<Position> ps = getPreviousNPositions(countback);
-        for (Position p : ps) {
-            Vector displacement = new Vector(sl.average, p);
-            sl.radius = Math.max(sl.radius, displacement.getLength());
-        }
-        return sl;
-
+    public PositionRecorder(int capacity) {
+        this.capacity = capacity;
     }
 
     public void addPosition(Position p) {
         ps.add(p);
-
         overall_sum = overall_sum.add(p);
+        if (ps.size() > capacity) {
+            Position removed = ps.remove(0);
+            overall_sum = overall_sum.subtract(removed);
+        }
         overall_average = overall_sum.divide(ps.size());
-
     }
 
-    public Position getPreviousPosition(int countback) {
-        if (countback >= ps.size())
-            return null;
-        return ps.get(ps.size() - 1 - countback);
+    public Position getAverage() {
+        return overall_average;
     }
 
-    public Position getMovingAverage(int countback) {
+    public Position getAverageLastN(int countback) {
         Position ave = new Position();
         for (int i = 0; i < countback && i < ps.size(); i++)
             ave = ave.add(ps.get(ps.size() - 1 - i));
         return ave.divide(countback);
     }
 
-    public Position getAverage() {
-        return overall_average;
+
+    public double getRadius() {
+        return getRadiusLastN(ps.size());
+    }
+
+    public double getRadiusLastN(int countback) {
+        double radius = 0;
+        Position ave = getAverageLastN(countback);
+        ArrayList<Position> ps = getPreviousNPositions(countback);
+        for (Position p : ps) {
+            Vector displacement = new Vector(ave, p);
+            radius = Math.max(radius, displacement.getLength());
+        }
+        return radius;
+    }
+
+    public Position getPreviousPosition(int countback) {
+        if (countback >= ps.size())
+            return null;
+        return ps.get(ps.size() - 1 - countback);
     }
 
     public ArrayList<Position> getPreviousNPositions(int n) {
@@ -75,8 +79,4 @@ public class PositionRecorder {
         return ps.size();
     }
 
-
-    public LimitingSphere simpleAverage() {
-        return getLimitingSphere(getRecordCount());
-    }
 }
